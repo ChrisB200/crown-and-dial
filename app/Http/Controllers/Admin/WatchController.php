@@ -16,8 +16,12 @@ class WatchController extends Controller
      */
     public function index()
     {
-        $watches = Watch::latest()->paginate(12);
-        return view('admin.watches.create', compact('watches'));
+        $watches = Watch::query()
+            ->with(['brand', 'category', 'supplier', 'inventory'])
+            ->orderByDesc('created_at')
+            ->paginate(20);
+
+        return view('admin.watches.index', compact('watches'));
     }
 
     /**
@@ -28,7 +32,7 @@ class WatchController extends Controller
         $brands = Brand::all();
         $categories = Category::all();
         $suppliers = Supplier::all();
-        return view("admin.watches.create", compact("brands", "categories", "suppliers"));
+        return view('admin.watches.create', compact('brands', 'categories', 'suppliers'));
     }
 
     /**
@@ -71,7 +75,7 @@ class WatchController extends Controller
         $brands = Brand::all();
         $categories = Category::all();
         $suppliers = Supplier::all();
-        return view("admin.watches.create", compact("brands", "categories", "suppliers"));
+        return view('admin.watches.edit', compact('watch', 'brands', 'categories', 'suppliers'));
     }
 
     /**
@@ -80,9 +84,9 @@ class WatchController extends Controller
     public function update(Request $request, Watch $watch)
     {
         $validated = $request->validate([
-            "brand_id" => 'required:exists:brands,id',
-            "category_id" => 'required:exists:categories,id',
-            "supplier_id" => 'required:exists:suppliers,id',
+            "brand_id" => 'required|exists:brands,id',
+            "category_id" => 'required|exists:categories,id',
+            "supplier_id" => 'required|exists:suppliers,id',
             "price" => "required|numeric",
             "name" => "required|string",
             "description" => "required|string",

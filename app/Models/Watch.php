@@ -19,25 +19,11 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \App\Models\Brand $brand
  * @property-read \App\Models\Category $category
  * @property-read \App\Models\Supplier $supplier
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Watch newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Watch newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Watch query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Watch whereBrandId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Watch whereCategoryId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Watch whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Watch whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Watch whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Watch whereImagePath($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Watch whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Watch wherePrice($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Watch whereSize($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Watch whereSupplierId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Watch whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class Watch extends Model
 {
-    protected $fillable = ["brand_id", "supplier_id", "category_id", "price", "name", "description", "image_path"];
+    protected $fillable = ["brand_id", "supplier_id", "category_id", "price", "name", "description", "image_path", "size"];
 
     public function brand()
     {
@@ -57,5 +43,22 @@ class Watch extends Model
     public function basket()
     {
         return $this->hasMany(BasketItem::class);
+    }
+
+    public function inventory()
+    {
+        return $this->hasOne(Inventory::class);
+    }
+
+    public function stockStatus(int $lowThreshold = 5): string
+    {
+        $qty = $this->inventory?->quantity ?? 0;
+        if ($qty <= 0) {
+            return 'out of stock';
+        }
+        if ($qty < $lowThreshold) {
+            return 'low stock';
+        }
+        return 'in stock';
     }
 }

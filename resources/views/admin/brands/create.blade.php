@@ -1,16 +1,22 @@
 @extends('layouts.admin')
 
-@section('page')
-  <h1>Add New Brand</h1>
-  <hr><br>
-  <form action="{{ route('admin.brands.store') }}" method="POST" enctype="multipart/form-data">
-    @csrf
+@section('title', 'Create Brand')
+@section('page_title', 'Create Brand')
 
-    {{-- Model --}}
-    <label>Name</label><br>
-    <input type="text" name="name" placeholder="e.g. Rolex" required>
-    <br><br>
-
-    <button type="submit">Create Brand</button>
-  </form>
+@section('content')
+<div class="row">
+    <div class="col-lg-6">
+        <div class="block">
+            <div class="title"><strong>New Brand</strong></div>
+            <form method="POST" action="{{ route('admin.brands.store') }}">
+                @csrf
+                <div class="form-group">
+                    <label>Name</label>
+                    <input class="form-control" name="name" required>
+                </div>
+                <button class="btn btn-primary" type="submit">Create</button>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection

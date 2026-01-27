@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rules\Password;
 
 class PasswordController extends Controller
@@ -23,6 +24,10 @@ class PasswordController extends Controller
         $request->user()->update([
             'password' => Hash::make($validated['password']),
         ]);
+
+        if (Schema::hasColumn('users', 'must_change_password')) {
+            $request->user()->forceFill(['must_change_password' => false])->save();
+        }
 
         return back()->with('status', 'password-updated');
     }

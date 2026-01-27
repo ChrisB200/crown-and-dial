@@ -1,86 +1,96 @@
 @extends('layouts.admin')
 
-@section('page')
-  <h1>Add New Watch</h1>
-  <hr><br>
+@section('title', 'Add Watch')
+@section('page_title', 'Add Watch')
 
-  {{-- Success Message --}}
-  @if (session('success'))
-    <div style="padding: 10px; background: #d4edda; color: #155724; margin-bottom: 15px;">
-      {{ session('success') }}
+@section('content')
+<div class="d-flex justify-content-between mb-3">
+    <h4 class="mb-0">Add New Watch</h4>
+    <a class="btn btn-secondary" href="{{ route('admin.watches.index') }}">Back to Watches</a>
+</div>
+
+@if (session('success'))
+    <div class="alert alert-success">{{ session('success') }}</div>
+@endif
+
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
     </div>
-  @endif
+@endif
 
-  {{-- Errors --}}
-  @if ($errors->any())
-    <div style="padding: 10px; background: #f8d7da; color: #721c24; margin-bottom: 15px;">
-      <ul>
-        @foreach ($errors->all() as $error)
-          <li>- {{ $error }}</li>
-        @endforeach
-      </ul>
-    </div>
-  @endif
+<div class="block">
+    <form action="{{ route('admin.watches.store') }}" method="POST" enctype="multipart/form-data">
+        @csrf
 
-  <form action="{{ route('admin.watches.store') }}" method="POST" enctype="multipart/form-data">
-    @csrf
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label>Brand</label>
+                <select class="form-control" name="brand_id" required>
+                    <option value="">-- Select Brand --</option>
+                    @foreach ($brands as $brand)
+                        <option value="{{ $brand->id }}" {{ (int)old('brand_id') === (int)$brand->id ? 'selected' : '' }}>
+                            {{ $brand->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
 
-    {{-- Brand --}}
-    <label>Brand:</label><br>
-    <select name="brand_id" required>
-      <option value="">-- Select Brand --</option>
-      @foreach ($brands as $brand)
-        <option value="{{ $brand->id }}">{{ $brand->name }}</option>
-      @endforeach
-    </select>
-    <br><br>
+            <div class="form-group col-md-4">
+                <label>Category</label>
+                <select class="form-control" name="category_id" required>
+                    <option value="">-- Select Category --</option>
+                    @foreach ($categories as $category)
+                        <option value="{{ $category->id }}" {{ (int)old('category_id') === (int)$category->id ? 'selected' : '' }}>
+                            {{ $category->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
 
-    {{-- Category --}}
-    <label>Category:</label><br>
-    <select name="category_id" required>
-      <option value="">-- Select Category --</option>
-      @foreach ($categories as $category)
-        <option value="{{ $category->id }}">{{ $category->name }}</option>
-      @endforeach
-    </select>
-    <br><br>
+            <div class="form-group col-md-4">
+                <label>Supplier</label>
+                <select class="form-control" name="supplier_id" required>
+                    <option value="">-- Select Supplier --</option>
+                    @foreach ($suppliers as $supplier)
+                        <option value="{{ $supplier->id }}" {{ (int)old('supplier_id') === (int)$supplier->id ? 'selected' : '' }}>
+                            {{ $supplier->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
 
-    {{-- Category --}}
-    <label>Supplier</label><br>
-    <select name="supplier_id" required>
-      <option value="">-- Select Supplier--</option>
-      @foreach ($suppliers as $supplier)
-        <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
-      @endforeach
-    </select>
-    <br><br>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label>Name</label>
+                <input class="form-control" type="text" name="name" value="{{ old('name') }}" placeholder="e.g. Submariner" required>
+            </div>
+            <div class="form-group col-md-3">
+                <label>Price</label>
+                <input class="form-control" type="number" name="price" step="0.01" value="{{ old('price') }}" required>
+            </div>
+            <div class="form-group col-md-3">
+                <label>Size</label>
+                <input class="form-control" type="number" name="size" step="1" value="{{ old('size') }}" required>
+            </div>
+        </div>
 
-    {{-- Model --}}
-    <label>Name</label><br>
-    <input type="text" name="name" placeholder="e.g. Submariner" required>
-    <br><br>
+        <div class="form-group">
+            <label>Description</label>
+            <textarea class="form-control" name="description" rows="4" required>{{ old('description') }}</textarea>
+        </div>
 
-    {{-- Price --}}
-    <label>Price</label><br>
-    <input type="number" name="price" step="0.01" required>
-    <br><br>
+        <div class="form-group">
+            <label>Product Image (optional)</label>
+            <input class="form-control-file" type="file" name="image">
+        </div>
 
-    {{-- Size --}}
-    <label>Size</label><br>
-    <input type="number" name="size" step="1" required>
-    <br><br>
-
-    {{-- Description --}}
-    <label>Description</label><br>
-    <textarea name="description" rows="4" cols="50"></textarea>
-    <br><br>
-
-    {{-- Image --}}
-    <label>Product Image</label><br>
-    <input type="file" name="image">
-    <br><br>
-
-    <button type="submit">Create Watch</button>
-  </form>
-
-@stop
+        <button class="btn btn-primary" type="submit">Create Watch</button>
+    </form>
+</div>
+@endsection

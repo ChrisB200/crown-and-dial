@@ -1,16 +1,4 @@
 <?php
-/* @noinspection ALL */
-// @formatter:off
-// phpcs:ignoreFile
-
-namespace PHPSTORM_META {
-
-   /**
-    * PhpStorm Meta file, to provide autocomplete information for PhpStorm
-    *
-    * @author Barry vd. Heuvel <barryvdh@gmail.com>
-    * @see https://github.com/barryvdh/laravel-ide-helper
-    */
     override(new \Illuminate\Contracts\Container\Container, map([
         '' => '@',
             'Illuminate\Bus\BatchRepository' => \Illuminate\Bus\DatabaseBatchRepository::class,

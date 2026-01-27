@@ -1,6 +1,12 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminSetupController;
+use App\Http\Controllers\Admin\SecurityController as AdminSecurityController;
+use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
+use App\Http\Controllers\Admin\AdminOrderController;
+use App\Http\Controllers\Admin\InventoryController as AdminInventoryController;
+use App\Http\Controllers\Admin\ReportsController as AdminReportsController;
 use App\Http\Controllers\Admin\SupplierController as AdminSupplierController;
 use App\Http\Controllers\Admin\WatchController as AdminWatchController;
 use App\Http\Controllers\Admin\BrandController as AdminBrandController;
@@ -13,19 +19,21 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\WatchController;
 use Illuminate\Support\Facades\Route;
 
-// home page
 Route::get('/', function () {
     return view('home');
 })->name("home");
 
 
-// about page
 Route::get('/about', function () {
     return view('about');
 })->name("about");
 
+Route::middleware(['guest'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/setup', [AdminSetupController::class, 'create'])->name('setup');
+    Route::post('/setup', [AdminSetupController::class, 'store'])->name('setup.store');
+});
 
-// watch routes
+
 Route::resource("watches", WatchController::class);
 Route::middleware([])
     ->prefix("watches")
@@ -37,7 +45,6 @@ Route::middleware([])
     });
 
 
-// contact routes
 Route::middleware(['auth'])
     ->prefix('contact')
     ->name('contact.')
@@ -48,7 +55,6 @@ Route::middleware(['auth'])
     });
 
 
-// basket routes
 Route::middleware(['auth'])
     ->prefix('basket')
     ->name('basket.')
@@ -60,7 +66,6 @@ Route::middleware(['auth'])
     });
 
 
-// checkout routes
 Route::middleware(['auth'])
     ->prefix('checkout')
     ->name('checkout.')
@@ -70,26 +75,45 @@ Route::middleware(['auth'])
         Route::post("/", [CheckoutController::class, "store"])->name("store");
     });
 
-// admin routes
-Route::middleware(['auth', 'admin'])
+Route::middleware(['auth', 'admin', 'force_password_change'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
-        // watches
+        
+        Route::get('/', fn () => redirect()->route('admin.dashboard'))->name('home');
+
+        
         Route::resource('watches', AdminWatchController::class);
 
-        // suppliers
+        
         Route::resource("suppliers", AdminSupplierController::class);
 
-        // brands
+        
         Route::resource("brands", AdminBrandController::class);
 
-        // dashboard
+        
+        Route::resource("customers", AdminCustomerController::class)->parameters(["customers" => "customer"]);
+
+        
+        Route::get("/orders", [AdminOrderController::class, "index"])->name("orders.index");
+        Route::get("/orders/{order}", [AdminOrderController::class, "show"])->name("orders.show");
+        Route::patch("/orders/{order}/ship", [AdminOrderController::class, "ship"])->name("orders.ship");
+
+        
+        Route::get("/inventory", [AdminInventoryController::class, "index"])->name("inventory.index");
+        Route::post("/inventory/incoming", [AdminInventoryController::class, "incoming"])->name("inventory.incoming");
+
+        
+        Route::get("/reports", [AdminReportsController::class, "index"])->name("reports.index");
+
+        
+        Route::get("/security", [AdminSecurityController::class, "index"])->name("security");
+
+        
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     });
 
 
-// user account routes
 Route::middleware(['auth'])
     ->prefix('account')
     ->name('account.')
@@ -105,7 +129,6 @@ Route::middleware(['auth'])
 
 
 
-// routes for to search for watches
 Route::get('/search', [WatchController::class, 'search'])->name('watches.search');
 
 
