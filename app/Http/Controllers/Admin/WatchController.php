@@ -47,7 +47,6 @@ class WatchController extends Controller
             "price" => "required|numeric",
             "name" => "required|string",
             "description" => "required|string",
-            "size" => "required|integer",
         ]);
 
         if ($request->hasFile("image")) {
@@ -90,7 +89,6 @@ class WatchController extends Controller
             "price" => "required|numeric",
             "name" => "required|string",
             "description" => "required|string",
-            "size" => "required|integer",
         ]);
 
         if ($request->hasFile("image")) {
