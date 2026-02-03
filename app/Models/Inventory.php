@@ -22,5 +22,5 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Inventory extends Model
 {
-    protected $fillable = ["quantity"];
+    protected $fillable = ['watch_id', 'quantity'];
 }
