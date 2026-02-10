@@ -22,6 +22,7 @@
     <!-- Custom stylesheet - for your changes-->
     <link rel="stylesheet" href="{{ asset('admin/css/custom.css') }}">
     <link rel="shortcut icon" href="{{ asset('admin/img/favicon.ico') }}">
+  @vite('resources/css/app.css')
 
     @stack('head')
 </head>
