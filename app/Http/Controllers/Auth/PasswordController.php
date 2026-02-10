@@ -29,6 +29,6 @@ class PasswordController extends Controller
             $request->user()->forceFill(['must_change_password' => false])->save();
         }
 
-        return back()->with('status', 'password-updated');
+        return back()->with('status', 'Password updated successfully.');
     }
 }
