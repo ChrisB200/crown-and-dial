@@ -1,13 +1,10 @@
 services:
   app:
     build: .
-    container_name: crown-and-dial-app
+    container_name: crown-app
     restart: unless-stopped
     expose:
       - "9000"
-    volumes:
-      - .:/app:ro
-      - laravel-storage:/app/storage
     environment:
       DB_CONNECTION: mysql
       DB_HOST: mysql
@@ -15,36 +12,29 @@ services:
       DB_DATABASE: crown_and_dial
       DB_USERNAME: crownuser
       DB_PASSWORD: crownpass
+
+  nginx:
+    image: nginx:alpine
+    container_name: crown-nginx
+    restart: unless-stopped
+    ports:
+      - "9050:80"
+    volumes:
+      - .:/var/www
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
-      mysql:
-        condition: service_healthy
-    networks:
-      - laravel-production
+      - app
 
   mysql:
     image: mysql:8.0
     restart: unless-stopped
-    ports:
-      - "3307:3306"
     environment:
       MYSQL_ROOT_PASSWORD: test
       MYSQL_DATABASE: crown_and_dial
       MYSQL_USER: crownuser
       MYSQL_PASSWORD: crownpass
     volumes:
-      - mysql-data-production:/var/lib/mysql
-    networks:
-      - laravel-production
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
+      - mysql-data:/var/lib/mysql
 
 volumes:
-  mysql-data-production:
-  laravel-storage:
-
-networks:
-  laravel-production:
-    driver: bridge
+  mysql-data:
