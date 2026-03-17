@@ -8,69 +8,34 @@
 
   <div class="orders-list">
     <h2>Past Orders</h2>
-    <div class="order-row">
-      <div class="order-left">
-        <div class="order-index">1.</div>
 
-        <div class="order-watch-box">WATCH</div>
+    @forelse($orders as $order)
+      <div class="order-row">
+        <div class="order-left">
+          <div class="order-index">{{ $loop->iteration }}.</div>
 
-        <div class="order-description">
-          WATCH DESCRIPTION
+          <div class="order-watch-box">ORDER #{{ $order->id }}</div>
+
+          <div class="order-description">
+            Status: {{ ucfirst($order->status) }}<br>
+            Total: £{{ number_format((float) $order->total, 2) }}<br>
+            Placed: {{ $order->created_at?->format('Y-m-d H:i') }}
+          </div>
+        </div>
+
+        <a href="{{ route('watches.index') }}" class="accent-button">
+          BUY AGAIN
+        </a>
+      </div>
+    @empty
+      <div class="order-row">
+        <div class="order-left">
+          <div class="order-description">
+            You have not placed any orders yet.
+          </div>
         </div>
       </div>
-
-      <button class="accent-button">
-        BUY AGAIN
-      </button>
-    </div>
-
-    <div class="order-row">
-      <div class="order-left">
-        <div class="order-index">2.</div>
-
-        <div class="order-watch-box">WATCH</div>
-
-        <div class="order-description">
-          WATCH DESCRIPTION
-        </div>
-      </div>
-
-      <button class="accent-button">
-        BUY AGAIN
-      </button>
-    </div>
-
-    <div class="order-row">
-      <div class="order-left">
-        <div class="order-index">3.</div>
-
-        <div class="order-watch-box">WATCH</div>
-
-        <div class="order-description">
-          WATCH DESCRIPTION
-        </div>
-      </div>
-
-      <button class="accent-button">
-        BUY AGAIN
-      </button>
-    </div>
-
-    <div class="order-row">
-      <div class="order-left">
-        <div class="order-index">4.</div>
-
-        <div class="order-watch-box">WATCH</div>
-
-        <div class="order-description">
-          WATCH DESCRIPTION
-        </div>
-      </div>
-
-      <button class="accent-button">
-        BUY AGAIN
-      </button>
-    </div>
+    @endforelse
 
   </div>
 
