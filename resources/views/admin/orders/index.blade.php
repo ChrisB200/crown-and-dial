@@ -22,7 +22,7 @@
 <div class="block">
     <div class="table-responsive">
         <table class="table table-striped">
-            <thead><tr><th>#</th><th>Customer</th><th>Status</th><th>Total</th><th>Created</th></tr></thead>
+            <thead><tr><th>#</th><th>Customer</th><th>Status</th><th>Total</th><th>Created</th><th>Actions</th></tr></thead>
             <tbody>
             @foreach($orders as $o)
                 <tr>
@@ -31,6 +31,9 @@
                     <td><span class="badge badge-secondary">{{ $o->status }}</span></td>
                     <td>£{{ number_format((float)$o->total,2) }}</td>
                     <td>{{ $o->created_at?->format('Y-m-d H:i') }}</td>
+                    <td>
+                        <a href="{{ route('admin.orders.show', $o) }}" class="btn btn-sm btn-info">Show</a>
+                    </td>
                 </tr>
             @endforeach
             </tbody>
