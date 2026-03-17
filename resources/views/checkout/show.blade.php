@@ -15,26 +15,25 @@
       <div class="watches">
         @foreach ($order->watches as $item)
           <div class="watch">
-            <form action="{{ route('basket.destroy', $item->id) }}" method="POST" class="exit">
-              @csrf
-              @method('DELETE')
-              <button class="exit">X</button>
-            </form>
             <div class="watch-image-container">
-              <img class="watch-image" src="{{ asset('storage/' . $item->watch->image_path) }}" />
+              @if(!empty($item->image_path))
+                <img class="watch-image" src="{{ asset('storage/' . $item->image_path) }}" alt="{{ $item->name }}" />
+              @else
+                <div class="watch-image">No image</div>
+              @endif
             </div>
 
             <div class="watch-info">
-              <p class="watch-brand">{{ strtoupper($item->watch->brand->name) }}</p>
-              <p class="watch-name">{{ $item->watch->name }}: {{ $item->size }}mm</p>
+              <p class="watch-brand">{{ strtoupper($item->brand?->name ?? '') }}</p>
+              <p class="watch-name">{{ $item->name }}</p>
 
               <div class="quantity">
                 <p>QTY</p>
-                <input class="watch-quantity" data-price="{{ $item->watch->price }}" min="1" type="number"
-                  value="{{ $item->quantity }}" data-id="{{ $item->id }}" disabled />
+                <input class="watch-quantity" data-price="{{ $item->price }}" min="1" type="number"
+                  value="{{ $item->pivot->quantity ?? 1 }}" data-id="{{ $item->id }}" disabled />
               </div>
 
-              <p class="watch-price">£{{ number_format($item->watch->price, 2) }}</p>
+              <p class="watch-price">£{{ number_format((float) $item->price, 2) }}</p>
             </div>
 
           </div>

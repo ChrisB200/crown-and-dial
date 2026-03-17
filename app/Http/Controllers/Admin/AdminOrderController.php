@@ -26,7 +26,7 @@ class AdminOrderController extends Controller
 
     public function show(Order $order)
     {
-        $order->load(['user', 'shipping_address', 'billing_address', 'card', 'watches.watch']);
+        $order->load(['user', 'shipping_address', 'billing_address', 'card', 'watches']);
         return view('admin.orders.show', compact('order'));
     }
 
@@ -48,9 +48,9 @@ class AdminOrderController extends Controller
             $order->tracking_number = $request->tracking_number;
             $order->save();
 
-            foreach ($order->watches as $line) {
-                $watchId = $line->watch_id;
-                $qty = (int)($line->quantity ?? 1);
+            foreach ($order->watches as $watch) {
+                $watchId = $watch->id;
+                $qty = (int)($watch->pivot->quantity ?? 1);
 
                 $inventory = Inventory::query()->firstOrCreate(['watch_id' => $watchId], ['quantity' => 0]);
                 $inventory->quantity = max(0, (int)$inventory->quantity - $qty);
