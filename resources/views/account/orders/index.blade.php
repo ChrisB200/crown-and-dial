@@ -1,75 +1,169 @@
 @extends('layouts.settings')
 
 @push('head')
-  @vite('resources/css/account/orders/index.css')
+    @vite('resources/css/account/orders/index.css')
 @endpush
 
 @section('page')
 
-  <div class="orders-list">
+<div class="orders-list">
     <h2>Past Orders</h2>
 
     @forelse($orders as $order)
-      <div class="order-row">
-        <div class="order-left">
-          <div class="order-index">{{ $loop->iteration }}.</div>
 
-          <div class="order-watch-box">ORDER #{{ $order->id }}</div>
+        <div class="order-row">
 
-          <div class="order-description">
-            <strong>Products:</strong>
-            @if($order->watches->isNotEmpty())
-              {{ $order->watches->pluck('name')->filter()->join(', ') }}
-            @else
-              No products found
-            @endif
-            <br>
-            <strong>Status:</strong> {{ ucfirst($order->status) }}<br>
-            <strong>Total:</strong> £{{ number_format((float) $order->total, 2) }}<br>
-            <strong>Placed:</strong> {{ $order->created_at?->format('Y-m-d H:i') }}
+            {{-- ===== Header ===== --}}
+            <div class="order-header">
+                <div>
+                    <strong>ORDER #{{ $order->id }}</strong><br>
+                    <small>{{ $order->created_at?->format('Y-m-d H:i') }}</small>
+                </div>
 
-            <details style="margin-top: 12px;">
-              <summary style="cursor: pointer; font-weight: 600;">View order details</summary>
+                <div class="order-summary">
+                    <div><strong>{{ ucfirst($order->status) }}</strong></div>
+                    <div>£{{ number_format((float) $order->total, 2) }}</div>
+                </div>
+            </div>
 
-              <div style="margin-top: 10px; line-height: 1.8;">
-                <div><strong>Order ID:</strong> #{{ $order->id }}</div>
-                <div><strong>Products:</strong></div>
-                <ul style="margin: 6px 0 10px 18px; padding: 0;">
-                  @forelse($order->watches as $watch)
-                    <li>
-                      {{ $watch->name ?? 'Unnamed product' }}
-                      @if(!is_null($watch->pivot->quantity ?? null))
-                        × {{ $watch->pivot->quantity }}
-                      @endif
-                    </li>
-                  @empty
-                    <li>No products found</li>
-                  @endforelse
-                </ul>
-                <div><strong>Courier:</strong> {{ $order->carrier ?? $order->shipping_courier ?? 'Not assigned yet' }}</div>
-                <div><strong>Tracking Number:</strong> {{ $order->tracking_number ?? $order->tracking ?? 'Not available yet' }}</div>
-                <div><strong>Status:</strong> {{ ucfirst($order->status) }}</div>
-                <div><strong>Total:</strong> £{{ number_format((float) $order->total, 2) }}</div>
-                <div><strong>Placed:</strong> {{ $order->created_at?->format('Y-m-d H:i') }}</div>
-              </div>
-            </details>
-          </div>
+            {{-- ===== Products ===== --}}
+            <div class="order-products">
+                @foreach($order->watches as $watch)
+
+                    @php
+                        $userReview = $watch->reviews?->firstWhere('user_id', auth()->id());
+                    @endphp
+
+                    <div class="order-product">
+
+                        {{-- Image --}}
+                        <a href="{{ route('watches.show', $watch->id) }}">
+                            <img
+                                src="{{ $watch->firstImage?->url }}"
+                                class="order-product-image"
+                                alt="{{ $watch->name }}"
+                            />
+                        </a>
+
+                        {{-- Info --}}
+                        <div class="order-product-info">
+                            <p class="product-name">{{ $watch->name }}</p>
+
+                            <p class="product-price">
+                                £{{ number_format($watch->price, 2) }}
+                            </p>
+
+                            <div class="product-actions">
+
+                                {{-- Review button --}}
+                                <button
+                                    type="button"
+                                    class="secondary-button review-btn"
+                                    data-watch-id="{{ $watch->id }}"
+                                    data-watch-name="{{ $watch->name }}"
+                                    data-comment="{{ e($userReview?->comment) }}"
+                                    data-rating="{{ $userReview?->rating }}"
+                                >
+                                    {{ $userReview ? 'Edit Review' : 'Leave Review' }}
+                                </button>
+
+                                {{-- Buy again --}}
+                                <form method="POST" action="{{ route('basket.store', $watch->id) }}">
+                                    @csrf
+                                    <button type="submit" class="accent-button">
+                                        Buy Again
+                                    </button>
+                                </form>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                @endforeach
+            </div>
+
         </div>
 
-        <a href="{{ route('watches.index') }}" class="accent-button">
-          BUY AGAIN
-        </a>
-      </div>
     @empty
-      <div class="order-row">
-        <div class="order-left">
-          <div class="order-description">
-            You have not placed any orders yet.
-          </div>
+        <div class="order-row">
+            <p>You have not placed any orders yet.</p>
         </div>
-      </div>
     @endforelse
 
-  </div>
+</div>
 
-@stop
+{{-- ===== REVIEW MODAL ===== --}}
+<div id="reviewModal" class="modal hidden">
+    <div class="modal-content">
+
+        <form class="review-form" method="POST" action="{{ route('reviews.store') }}">
+            @csrf
+
+            <input type="hidden" name="watch_id" id="reviewWatchId">
+
+            <h3 id="reviewTitle">Leave a review</h3>
+
+            <textarea
+                name="comment"
+                placeholder="Write your review..."
+                required
+            ></textarea>
+
+            <select name="rating" required>
+                <option value="">Rating</option>
+                <option value="5">5 ★</option>
+                <option value="4">4 ★</option>
+                <option value="3">3 ★</option>
+                <option value="2">2 ★</option>
+                <option value="1">1 ★</option>
+            </select>
+
+            <button type="submit" class="accent-button">
+                Submit Review
+            </button>
+
+        </form>
+
+    </div>
+</div>
+
+{{-- ===== JS ===== --}}
+<script>
+    const modal = document.getElementById('reviewModal');
+    const watchIdInput = document.getElementById('reviewWatchId');
+    const title = document.getElementById('reviewTitle');
+    const commentInput = document.querySelector('textarea[name="comment"]');
+    const ratingSelect = document.querySelector('select[name="rating"]');
+
+    document.querySelectorAll('.review-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+
+            watchIdInput.value = btn.dataset.watchId;
+
+            const hasReview = btn.dataset.comment;
+
+            title.textContent = hasReview
+                ? `Edit Review for ${btn.dataset.watchName}`
+                : `Leave a Review for ${btn.dataset.watchName}`;
+
+            // Autofill
+            commentInput.value = btn.dataset.comment || '';
+            ratingSelect.value = btn.dataset.rating || '';
+
+            modal.classList.remove('hidden');
+        });
+    });
+
+    // Close modal + reset
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.add('hidden');
+
+            commentInput.value = '';
+            ratingSelect.value = '';
+        }
+    });
+</script>
+
+@endsection
