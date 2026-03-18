@@ -8,7 +8,7 @@
   <div class="watch-container">
     <section class="watch">
       <div class="watch-image-container">
-        <img class="watch-image" src="{{ asset('storage/' . $watch->image_path) }}" />
+        <img class="watch-image" src="{{ $watch->firstImage->url }}" />
       </div>
       <div class="watch-content">
         <div class="watch-top">

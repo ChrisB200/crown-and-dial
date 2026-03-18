@@ -32,7 +32,7 @@
             <button class="exit">X</button>
           </form>
           <div class="watch-image-container">
-            <img class="watch-image" src="{{ asset('storage/' . $item->watch->image_path) }}" />
+            <img class="watch-image" src="{{$item->watch->firstImage->url }}" />
           </div>
 
           <div class="watch-info">
