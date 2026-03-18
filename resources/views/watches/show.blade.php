@@ -7,8 +7,20 @@
 @section('page')
   <div class="watch-container">
     <section class="watch">
-      <div class="watch-image-container">
-        <img class="watch-image" src="{{ $watch->firstImage->url }}" />
+      <div class="watch-images">
+      <div id="imageModal" class="image-modal hidden">
+        <img id="modalImage" />
+      </div>
+        <div class="watch-image-container">
+          <img class="watch-image" src="{{ $watch->firstImage->url }}" />
+        </div>
+        <div class="watch-thumbnails">
+          @foreach ($watch->images as $image)
+            <div class="thumbnail">
+              <img class="thumbnail-image" src="{{ $image->url}}"/>
+            </div>
+          @endforeach
+        </div>
       </div>
       <div class="watch-content">
         <div class="watch-top">
@@ -45,16 +57,34 @@
     document.querySelectorAll('.size').forEach(button => {
       button.addEventListener('click', () => {
 
-        // Remove active class from ALL size buttons
         document.querySelectorAll('.size').forEach(b => b.classList.remove('accent-button'));
 
-        // Add active class ONLY to the one clicked
         button.classList.add('accent-button');
 
-        // Update hidden input (for Add to Bag)
         document.getElementById('selected-size').value = button.dataset.size;
 
       });
+    });
+    const modal = document.getElementById('imageModal');
+    const modalImage = document.getElementById('modalImage');
+    const mainImage = document.querySelector('.watch-image');
+
+    // Thumbnails → update main image
+    document.querySelectorAll('.thumbnail img').forEach(img => {
+        img.addEventListener('click', () => {
+            mainImage.src = img.src;
+        });
+    });
+
+    // Main image → open modal
+    mainImage.addEventListener('click', () => {
+        modalImage.src = mainImage.src;
+        modal.classList.remove('hidden');
+    });
+
+    // Close modal
+    modal.addEventListener('click', () => {
+        modal.classList.add('hidden');
     });
   </script>
 @stop
