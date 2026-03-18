@@ -2,6 +2,7 @@ import logging
 from typing import List
 
 from playwright.async_api import Browser, Page
+from scripts.config import load_env
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +32,7 @@ class WatchShop:
         self.browser = browser
         self.page = page
         self.watches = []
-        self.max = 25
+        self.max = int(load_env("NUM_WATCHES", 1))
 
     @classmethod
     async def create(cls, browser: Browser):
@@ -62,7 +63,7 @@ class WatchShop:
             watch_urls.append(href)
             logger.debug("Found %s", href)
 
-            if count == self.max:
+            if count >= self.max:
                 break
 
         logger.info("Found %s watches on %s", len(watch_urls), url)

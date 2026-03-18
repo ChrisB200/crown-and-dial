@@ -1,70 +1,98 @@
 import logging
+import sqlite3
 
 import pymysql
 
 from .config import load_env
 
-DB_HOST = load_env("DB_HOST")
-DB_USER = load_env("DB_USER")
-DB_PASSWORD = load_env("DB_PASSWORD")
-DB_DATABASE = load_env("DB_DATABASE")
+DB_TYPE = load_env("DB_TYPE") or "mysql"
+
+DB_HOST = load_env("DB_HOST", "a")
+DB_USER = load_env("DB_USER", "a")
+DB_PASSWORD = load_env("DB_PASSWORD", "a")
+DB_DATABASE = load_env("DB_DATABASE", "a")
 
 logger = logging.getLogger(__name__)
 
 
 class RepositoryService:
     def __init__(self):
-        self.connection = pymysql.connect(
-            host=DB_HOST,
-            user=DB_USER,
-            password=DB_PASSWORD,
-            database=DB_DATABASE,
-            cursorclass=pymysql.cursors.DictCursor,
-        )
-        self.cursor = self.connection.cursor()
-        logger.debug("Connected to the database")
+        if DB_TYPE == "sqlite":
+            self.connection = sqlite3.connect(DB_DATABASE)
+            self.connection.row_factory = sqlite3.Row
+            self.cursor = self.connection.cursor()
+            self.placeholder = "?"
+        else:
+            self.connection = pymysql.connect(
+                host=DB_HOST,
+                user=DB_USER,
+                password=DB_PASSWORD,
+                database=DB_DATABASE,
+                cursorclass=pymysql.cursors.DictCursor,
+            )
+            self.cursor = self.connection.cursor()
+            self.placeholder = "%s"
+
+        logger.debug("Connected to %s database", DB_TYPE)
+
+    # ===== HELPERS =====
+
+    def _insert_or_get(self, table: str, name: str):
+        """
+        Cross-db safe insert or get existing row id
+        """
+        if DB_TYPE == "mysql":
+            qry = f"""
+                INSERT INTO {table} (name)
+                VALUES ({self.placeholder})
+                ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id);
+            """
+            self.cursor.execute(qry, (name,))
+            return self.cursor.lastrowid
+
+        else:  # sqlite
+            qry = f"""
+                INSERT OR IGNORE INTO {table} (name)
+                VALUES ({self.placeholder})
+            """
+            self.cursor.execute(qry, (name,))
+
+            qry = f"""
+                SELECT id FROM {table} WHERE name = {self.placeholder}
+            """
+            self.cursor.execute(qry, (name,))
+            return self.cursor.fetchone()["id"]
+
+    # ===== CREATE METHODS =====
 
     def _create_brand(self, brand: str):
-        qry = """
-            INSERT INTO brands (name)
-            VALUES (%s)
-            ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id);
-        """
-        values = (brand,)
-        self.cursor.execute(qry, values)
-        self.connection.commit()
+        brand_id = self._insert_or_get("brands", brand)
         logger.debug("Created brand %s", brand)
-        return self.cursor.lastrowid
+        return brand_id
 
     def _create_category(self, category: str):
-        qry = """
-            INSERT INTO categories (name)
-            VALUES (%s)
-            ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id);
-        """
-        values = (category,)
-        self.cursor.execute(qry, values)
-        self.connection.commit()
+        category_id = self._insert_or_get("categories", category)
         logger.debug("Created category %s", category)
-        return self.cursor.lastrowid
+        return category_id
 
     def _create_watch_images(self, watch_id, urls):
-        qry = """
+        qry = f"""
             INSERT INTO watch_images (watch_id, position, url)
-            VALUES (%s, %s, %s)
+            VALUES ({self.placeholder}, {self.placeholder}, {self.placeholder})
         """
         for count, url in enumerate(urls):
-            values = (watch_id, count, url)
-            self.cursor.execute(qry, values)
+            self.cursor.execute(qry, (watch_id, count, url))
 
     def _create_watch(self, watch: dict):
         category_id = self._create_category(watch["category"])
         brand_id = self._create_brand(watch["brand"])
 
-        qry = """
+        qry = f"""
             INSERT INTO watches (brand_id, supplier_id, category_id, name, price, description)
-            VALUES (%s, %s, %s, %s, %s, %s)
+            VALUES ({self.placeholder}, {self.placeholder}, {self.placeholder},
+                    {self.placeholder}, {self.placeholder}, {self.placeholder})
         """
+
         values = (
             brand_id,
             1,
@@ -75,8 +103,13 @@ class RepositoryService:
         )
 
         self.cursor.execute(qry, values)
-        self._create_watch_images(self.cursor.lastrowid, watch["img_urls"])
+
+        watch_id = self.cursor.lastrowid
+        self._create_watch_images(watch_id, watch["img_urls"])
+
         logger.debug("Added watch %s to db", watch["name"])
+
+    # ===== PUBLIC =====
 
     def commit(self, watches: list[dict]):
         for watch in watches:
