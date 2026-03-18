@@ -16,11 +16,7 @@
         @foreach ($order->watches as $item)
           <div class="watch">
             <div class="watch-image-container">
-              @if(!empty($item->image_path))
-                <img class="watch-image" src="{{ asset('storage/' . $item->image_path) }}" alt="{{ $item->name }}" />
-              @else
-                <div class="watch-image">No image</div>
-              @endif
+              <img class="watch-image" src="{{ $item->watch->firstImage->url }}" />
             </div>
 
             <div class="watch-info">

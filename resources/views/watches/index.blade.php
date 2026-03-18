@@ -31,7 +31,7 @@
       @foreach ($watches as $watch)
         <a class="watch" href="{{ route('watches.show', compact('watch')) }}">
           <div class="watch-image-container">
-            <img class="watch-image" src="{{ asset('storage/' . $watch->image_path) }}" />
+            <img class="watch-image" src="{{ $watch->firstImage->url }}" />
           </div>
           <div class="watch-content">
             <p class="watch-brand">{{ strtoupper($watch->brand->name) }}</p>

@@ -19,11 +19,12 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \App\Models\Brand $brand
  * @property-read \App\Models\Category $category
  * @property-read \App\Models\Supplier $supplier
+ *
  * @mixin \Eloquent
  */
 class Watch extends Model
 {
-    protected $fillable = ["brand_id", "supplier_id", "category_id", "price", "name", "description", "image_path", "size"];
+    protected $fillable = ['brand_id', 'supplier_id', 'category_id', 'price', 'name', 'description', 'size'];
 
     public function brand()
     {
@@ -50,6 +51,16 @@ class Watch extends Model
         return $this->hasOne(Inventory::class);
     }
 
+    public function firstImage()
+    {
+        return $this->hasOne(WatchImage::class)->orderBy('position');
+    }
+
+    public function images()
+    {
+        return $this->hasMany(WatchImage::class)->orderBy('position');
+    }
+
     public function stockStatus(int $lowThreshold = 5): string
     {
         $qty = $this->inventory?->quantity ?? 0;
@@ -59,6 +70,7 @@ class Watch extends Model
         if ($qty < $lowThreshold) {
             return 'low stock';
         }
+
         return 'in stock';
     }
 }
