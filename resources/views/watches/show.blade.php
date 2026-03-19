@@ -6,19 +6,20 @@
 
 @section('page')
   <div class="watch-container">
+  <div>
     <section class="watch">
       <div class="watch-images">
-      <div id="imageModal" class="image-modal hidden">
-        <img id="modalImage" />
-      </div>
+        <div id="imageModal" class="image-modal hidden">
+          <img id="modalImage" />
+        </div>
         <div class="watch-image-container">
           <img class="watch-image" src="{{ $watch->firstImage->url }}" />
         </div>
         <div class="watch-thumbnails">
           @foreach ($watch->images as $image)
-            <div class="thumbnail">
-              <img class="thumbnail-image" src="{{ $image->url}}"/>
-            </div>
+          <div class="thumbnail">
+            <img class="thumbnail-image" src="{{ $image->url}}"/>
+          </div>
           @endforeach
         </div>
       </div>
@@ -52,6 +53,49 @@
         </div>
       </div>
     </section>
+  </div>
+  <section class="watch-reviews-section">
+
+    <div class="watch-reviews">
+      <p><strong>Customer Reviews</strong></p>
+      <hr />
+
+      @forelse($watch->reviews as $review)
+
+        <div class="review">
+
+          <div class="review-top">
+            <span class="review-user">
+              {{ $review->user->name }}
+              @if($review->user_id === auth()->id())
+                <span class="you-badge">(You)</span>
+              @endif
+            </span>
+
+            <span class="review-rating">
+              @for ($i = 1; $i <= 5; $i++)
+                {{ $i <= $review->rating ? '★' : '☆' }}
+              @endfor
+            </span>
+          </div>
+
+          <p class="review-comment">
+            {{ $review->comment }}
+          </p>
+
+          <small class="review-date">
+            {{ $review->created_at->format('M d, Y') }}
+          </small>
+
+        </div>
+
+      @empty
+        <p class="no-reviews">No reviews yet.</p>
+      @endforelse
+
+    </div>
+
+  </section>
   </div>
   <script>
     document.querySelectorAll('.size').forEach(button => {

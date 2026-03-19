@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Watch;
+use Illuminate\Http\Request;
 
 class WatchController extends Controller
 {
@@ -12,7 +12,7 @@ class WatchController extends Controller
     {
         $search = $request->input('q'); // ← unified input name
 
-        $query = Watch::with('brand', 'category');
+        $query = Watch::with('brand', 'category', 'reviews.user');
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -25,7 +25,7 @@ class WatchController extends Controller
         }
 
         $watches = $query->latest()->paginate(12)->withQueryString();
-        $categoryName = "ALL";
+        $categoryName = 'ALL';
 
         return view('watches.index', compact('watches', 'categoryName', 'search'));
     }
@@ -37,9 +37,9 @@ class WatchController extends Controller
 
     public function category(string $slug, Request $request)
     {
-        $category = Category::where("name", $slug)->firstOrFail();
+        $category = Category::where('name', $slug)->firstOrFail();
 
-        $query = Watch::where("category_id", $category->id);
+        $query = Watch::where('category_id', $category->id);
 
         if ($search = $request->input('q')) {
             $query->where('name', 'LIKE', "%{$search}%");
@@ -48,6 +48,6 @@ class WatchController extends Controller
         $watches = $query->paginate(12)->withQueryString();
         $categoryName = strtoupper($category->name);
 
-        return view("watches.index", compact("watches", "categoryName", "search"));
+        return view('watches.index', compact('watches', 'categoryName', 'search'));
     }
 }

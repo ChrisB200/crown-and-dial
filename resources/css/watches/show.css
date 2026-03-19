@@ -4,6 +4,7 @@
     width: 100%;
     display: flex;
     justify-content: center;
+    flex-direction: column;
 }
 
 .watch {
@@ -176,4 +177,50 @@ form > button {
     .watch-image-container {
         max-width: 100%;
     }
+}
+
+.watch-reviews-section {
+    width: 100%;
+    max-width: 1200px;
+    margin: 3rem auto;
+    padding: 0 3rem;
+}
+
+.watch-reviews {
+    width: 100%;
+}
+
+.review {
+    border-bottom: 1px solid var(--stroke);
+    padding: 1.5rem 0;
+}
+
+.review-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.review-user {
+    font-weight: 600;
+}
+
+.you-badge {
+    font-size: 0.75rem;
+    color: var(--accent);
+    margin-left: 5px;
+}
+
+.review-rating {
+    color: gold;
+}
+
+.review-comment {
+    margin: 0.5rem 0;
+    line-height: 1.5;
+}
+
+.review-date {
+    color: #888;
+    font-size: 0.8rem;
 }

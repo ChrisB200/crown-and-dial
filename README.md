@@ -116,3 +116,15 @@ php artisan serve
 Your application will now be running locally.
 
 ## Setup
+
+Run this scraper after you have ran the artisan migrate command to populate the watches.
+
+Ensure that you have python installed on your machine.
+
+```bash
+cd scraper
+pip install -r requirements.txt
+playwright install
+cp .env.dev.example .env
+python main.py
+```

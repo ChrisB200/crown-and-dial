@@ -55,16 +55,24 @@
       </a>
     </div>
   </section>
-  <section class="reviews">
-    <h2 class="section-title">REVIEWS</h2>
-    <p>John</p>
-    <p>I absolutely love my Crown & Dial Watch – the craftsmanship, quality, and timeless design are everything I hoped
-      for.</p>
-    <p>It’s truly a watch that stands out and is worth the investment.</p>
+<section class="reviews">
+  <h2 class="section-title">REVIEWS</h2>
 
-    <p>Sarah</p>
-    <p>This is my second purchase from Crown & Dial.</p>
-    <p>These watches are the perfect gift ideas.</p>
-    <p>Will be coming back.</p>
-  </section>
+  <div class="home-review">
+    <p><strong>John</strong></p>
+    <p>★★★★★</p>
+    <p>
+      I absolutely love my Crown & Dial watch – the craftsmanship and design are incredible.
+    </p>
+  </div>
+
+  <div class="home-review">
+    <p><strong>Sarah</strong></p>
+    <p>★★★★★</p>
+    <p>
+      My second purchase. Amazing quality and perfect gift ideas.
+    </p>
+  </div>
+
+</section>
 @stop
