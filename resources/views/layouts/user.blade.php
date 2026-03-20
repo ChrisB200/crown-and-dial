@@ -62,9 +62,6 @@
             <a href="{{ route('contact.create') }}">CONTACT US</a>
           </li>
           @auth
-          <li>
-            <a href="{{ route('wishlist.index') }}">WISHLIST</a>
-          </li>
           @endauth
           <li>
             <a href="{{ route('basket.index') }}">BASKET</a>
