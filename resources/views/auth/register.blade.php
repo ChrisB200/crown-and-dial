@@ -3,6 +3,12 @@
 @section('content')
   <x-logo class="logo-container" />
 
+  @if ($errors->any())
+    <div style="color: var(--error); font-weight: bold; text-align: center;" role="alert">
+      {{ $errors->first() }}
+    </div>
+  @endif
+
   <form class="credential-form" method="POST" action="{{ route('register') }}">
     @csrf
     <h1 class="credential-title">Register to Crown & Dial</h1>
@@ -13,7 +19,7 @@
       <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name">
 
       @error('name')
-        <div>{{ $message }}</div>
+        <div style="color: var(--error); font-weight: bold;">{{ $message }}</div>
       @enderror
     </div>
 
@@ -23,7 +29,7 @@
       <input id="email" type="email" name="email" value="{{ old('email') }}" required autocomplete="username">
 
       @error('email')
-        <div>{{ $message }}</div>
+        <div style="color: var(--error); font-weight: bold;">{{ $message }}</div>
       @enderror
     </div>
 
@@ -34,7 +40,7 @@
         <input id="password" type="password" name="password" required autocomplete="new-password">
 
         @error('password')
-          <div>{{ $message }}</div>
+          <div style="color: var(--error); font-weight: bold;">{{ $message }}</div>
         @enderror
       </div>
 
@@ -45,7 +51,7 @@
           autocomplete="new-password">
 
         @error('password_confirmation')
-          <div>{{ $message }}</div>
+          <div style="color: var(--error); font-weight: bold;">{{ $message }}</div>
         @enderror
       </div>
     </div>

@@ -16,7 +16,7 @@
         @foreach ($order->watches as $item)
           <div class="watch">
             <div class="watch-image-container">
-              <img class="watch-image" src="{{ $item->watch->firstImage->url }}" />
+              <img class="watch-image" src="{{ $item->firstImage?->url }}" />
             </div>
 
             <div class="watch-info">
