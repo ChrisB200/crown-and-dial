@@ -1,8 +1,8 @@
 main {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   flex-direction: column;
-  gap: 8rem;
+  gap: 3rem;
 }
 
 .edit-form,
@@ -13,6 +13,10 @@ main {
 
 .credential-title {
   text-align: left;
+}
+
+.form-header {
+  margin-bottom: 0.5rem;
 }
 
 .credential-rows {
@@ -32,4 +36,21 @@ hr {
 
 .forms {
   width: 100%;
+}
+
+@media (max-width: 1024px) {
+  main {
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .edit-form,
+  .logout-form {
+    max-width: 100%;
+  }
+
+  .credential-rows {
+    gap: 1rem;
+  }
 }

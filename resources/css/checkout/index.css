@@ -179,3 +179,78 @@ form {
 .section-title {
   margin-bottom: 4rem;
 }
+
+@media (max-width: 1024px) {
+  .content {
+    flex-direction: column;
+    padding: 0 1.5rem;
+    gap: 1.5rem;
+  }
+
+  .content > form {
+    order: 2;
+  }
+
+  .basket {
+    order: 1;
+  }
+
+  .content > form,
+  .basket {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .basket {
+    position: static;
+    top: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .section-title {
+    margin-bottom: 2rem;
+    font-size: 2rem;
+  }
+
+  .content {
+    padding: 0 1rem;
+    gap: 1rem;
+  }
+
+  form {
+    gap: 1rem;
+  }
+
+  .form {
+    padding: 0.875rem;
+  }
+
+  .form-span {
+    grid-template-columns: 1fr;
+    margin-bottom: 0.5rem;
+  }
+
+  .watch {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .watch-image-container {
+    max-width: 100%;
+  }
+
+  .watch-info {
+    row-gap: 0.75rem;
+  }
+
+  .quantity {
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .order-summary {
+    padding: 1rem 0;
+  }
+}

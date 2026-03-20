@@ -1,12 +1,55 @@
 .orders-list {
     padding: 2rem;
 }
+
+.orders-list > h2 {
+    margin-bottom: 1rem;
+}
+
+.eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.account-empty-state {
+    border: 1px solid var(--stroke);
+    background: var(--muted);
+    padding: 3rem 2rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.accent-link {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.85rem 1.5rem;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: var(--primary);
+    border-radius: var(--border-radius);
+    margin-top: 0.75rem;
+}
+
+.accent-link:hover {
+    text-decoration: none;
+    opacity: 0.9;
+}
+
 .order-row {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    padding: 20px 0;
-    border-bottom: 1px solid var(--stroke);
+    padding: 1.25rem;
+    border: 1px solid var(--stroke);
+    border-radius: var(--border-radius);
+    background: var(--primary);
+    margin-bottom: 1rem;
 }
 
 /* ===== Header ===== */
@@ -15,6 +58,7 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    gap: 1rem;
 }
 
 .order-summary {
@@ -34,6 +78,8 @@
     display: flex;
     gap: 1rem;
     align-items: flex-start;
+    border-top: 1px solid var(--stroke);
+    padding-top: 1rem;
 }
 
 /* ===== Image ===== */
@@ -67,7 +113,8 @@
 
 .product-actions {
     display: flex;
-    gap: 0.5rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
     margin-top: 0.5rem;
 }
 
@@ -84,11 +131,13 @@
 }
 
 .modal-content {
-    background: white;
-    padding: 20px;
+    background: var(--primary);
+    padding: 1.25rem;
     max-width: 500px;
     width: 100%;
     border-radius: 6px;
+    max-height: 90dvh;
+    overflow-y: auto;
 
     display: flex;
     flex-direction: column;
@@ -113,4 +162,63 @@
     display: flex;
     flex-direction: column;
     gap: 2rem;
+}
+
+@media (max-width: 1024px) {
+    .orders-list {
+        padding: 1.25rem;
+    }
+
+    .order-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .order-summary {
+        text-align: left;
+    }
+
+    .product-actions {
+        width: 100%;
+    }
+
+    .product-actions form,
+    .product-actions button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .orders-list {
+        padding: 1rem;
+    }
+
+    .order-row {
+        padding: 1rem;
+    }
+
+    .order-product {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .order-product-image {
+        width: 100%;
+        max-width: 220px;
+        height: auto;
+        align-self: center;
+    }
+
+    .modal-content {
+        width: calc(100% - 2rem);
+        padding: 1rem;
+    }
+
+    .review-form {
+        gap: 1rem;
+    }
+
+    .account-empty-state {
+        padding: 2rem 1rem;
+    }
 }

@@ -8,9 +8,8 @@
   <form class="edit-form" method="post" action="{{ route('account.profile.update') }}">
     @csrf
     @method('patch')
-    <div>
+    <div class="form-header">
       <h2 class="credential-title">Update Profile</h2>
-      <br />
       <hr />
     </div>
     <div class="credential-rows">
@@ -27,9 +26,8 @@
   </form>
   <form class="logout-form" method="post" action="{{ route('logout') }}">
     @csrf
-    <div>
+    <div class="form-header">
       <h2 class="credential-title">Log Out</h2>
-      <br />
       <hr />
     </div>
     <div class="credential-rows">

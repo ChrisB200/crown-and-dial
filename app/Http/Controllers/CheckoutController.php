@@ -50,16 +50,19 @@ class CheckoutController extends Controller
         $user = $request->user();
 
         $request->validate([
-            'shipping-line-1' => 'required|string',
-            'shipping-postcode' => 'required|string',
-            'shipping-city' => 'required|string',
-            'billing-line-1' => 'required|string',
-            'billing-postcode' => 'required|string',
-            'billing-city' => 'required|string',
-            'card-name' => 'required|string',
-            'card-number' => 'required|string',
-            'card-expiry' => 'required|string',
-            'card-cvv' => 'required|string',
+            'shipping-line-1' => ['required', 'string', 'max:255'],
+            'shipping-line-2' => ['nullable', 'string', 'max:255'],
+            'shipping-postcode' => ['required', 'regex:/^[A-Za-z0-9 ]{5,8}$/'],
+            'shipping-city' => ['required', 'string', 'max:100'],
+            'billing_same_as_shipping' => ['nullable', 'boolean'],
+            'billing-line-1' => ['required_unless:billing_same_as_shipping,1', 'nullable', 'string', 'max:255'],
+            'billing-line-2' => ['nullable', 'string', 'max:255'],
+            'billing-postcode' => ['required_unless:billing_same_as_shipping,1', 'nullable', 'regex:/^[A-Za-z0-9 ]{5,8}$/'],
+            'billing-city' => ['required_unless:billing_same_as_shipping,1', 'nullable', 'string', 'max:100'],
+            'card-name' => ['required', 'string', 'max:255'],
+            'card-number' => ['required', 'digits:16'],
+            'card-expiry' => ['required', 'regex:/^(0[1-9]|1[0-2])\/\d{2}$/'],
+            'card-cvv' => ['required', 'digits:3'],
         ]);
 
         $shipping = Address::create([
@@ -70,12 +73,14 @@ class CheckoutController extends Controller
             'postcode' => $request['shipping-postcode'],
         ]);
 
+        $useShippingForBilling = $request->boolean('billing_same_as_shipping');
+
         $billing = Address::create([
             'user_id' => $user->id,
-            'line_1' => $request['billing-line-1'],
-            'line_2' => $request['billing-line-2'],
-            'city' => $request['billing-city'],
-            'postcode' => $request['billing-postcode'],
+            'line_1' => $useShippingForBilling ? $request['shipping-line-1'] : $request['billing-line-1'],
+            'line_2' => $useShippingForBilling ? $request['shipping-line-2'] : $request['billing-line-2'],
+            'city' => $useShippingForBilling ? $request['shipping-city'] : $request['billing-city'],
+            'postcode' => $useShippingForBilling ? $request['shipping-postcode'] : $request['billing-postcode'],
         ]);
 
         $card = Card::create([

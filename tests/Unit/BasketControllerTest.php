@@ -3,6 +3,7 @@
 use App\Models\BasketItem;
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Inventory;
 use App\Models\Supplier;
 use App\Models\Watch;
 use App\Models\WatchImage;
@@ -57,6 +58,10 @@ test('adding an item to the basket creates a basket item', function () {
     $supplier = basketMakeSupplier('Tudor Supplier');
     $watch = basketMakeWatch($category, $brand, $supplier, 'Test Watch', '250.00');
     basketMakeWatchImage($watch);
+    Inventory::create([
+        'watch_id' => $watch->id,
+        'quantity' => 10,
+    ]);
 
     $response = $this
         ->actingAs($user)
@@ -81,6 +86,10 @@ test('adding the same watch and size increments quantity', function () {
     $supplier = basketMakeSupplier('Tudor Supplier');
     $watch = basketMakeWatch($category, $brand, $supplier, 'Test Watch', '250.00');
     basketMakeWatchImage($watch);
+    Inventory::create([
+        'watch_id' => $watch->id,
+        'quantity' => 10,
+    ]);
 
     $this
         ->actingAs($user)
@@ -141,6 +150,10 @@ test('updating basket quantity returns JSON and persists', function () {
     $supplier = basketMakeSupplier('Tudor Supplier');
     $watch = basketMakeWatch($category, $brand, $supplier, 'Test Watch', '250.00');
     basketMakeWatchImage($watch);
+    Inventory::create([
+        'watch_id' => $watch->id,
+        'quantity' => 10,
+    ]);
 
     $item = BasketItem::create([
         'user_id' => $user->id,
@@ -159,6 +172,37 @@ test('updating basket quantity returns JSON and persists', function () {
     $this->assertDatabaseHas('basket_items', [
         'id' => $item->id,
         'quantity' => 3,
+    ]);
+});
+
+test('updating basket quantity above stock returns validation-style error', function () {
+    $user = User::factory()->create();
+
+    $category = basketMakeCategory();
+    $brand = basketMakeBrand('Rolex');
+    $supplier = basketMakeSupplier('Tudor Supplier');
+    $watch = basketMakeWatch($category, $brand, $supplier, 'Test Watch', '250.00');
+    basketMakeWatchImage($watch);
+    Inventory::create([
+        'watch_id' => $watch->id,
+        'quantity' => 2,
+    ]);
+
+    $item = BasketItem::create([
+        'user_id' => $user->id,
+        'watch_id' => $watch->id,
+        'size' => 40,
+        'quantity' => 1,
+    ]);
+
+    $response = $this
+        ->actingAs($user)
+        ->patch(route('basket.update', $item), ['quantity' => 5]);
+
+    $response->assertStatus(422);
+    $response->assertJson([
+        'success' => false,
+        'message' => 'Requested quantity exceeds available stock.',
     ]);
 });
 
@@ -185,6 +229,34 @@ test('deleting a basket item removes it and redirects', function () {
     $response->assertRedirect(route('basket.index'));
     $this->assertDatabaseMissing('basket_items', [
         'id' => $item->id,
+    ]);
+});
+
+test('out of stock watch can not be added to basket', function () {
+    $user = User::factory()->create();
+
+    $category = basketMakeCategory();
+    $brand = basketMakeBrand('Rolex');
+    $supplier = basketMakeSupplier('Tudor Supplier');
+    $watch = basketMakeWatch($category, $brand, $supplier, 'Test Watch', '250.00');
+    basketMakeWatchImage($watch);
+
+    Inventory::create([
+        'watch_id' => $watch->id,
+        'quantity' => 0,
+    ]);
+
+    $response = $this
+        ->actingAs($user)
+        ->from(route('watches.show', $watch))
+        ->post(route('basket.store', $watch), ['size' => 40]);
+
+    $response->assertRedirect(route('watches.show', $watch));
+    $response->assertSessionHas('error', 'This watch is currently out of stock.');
+
+    $this->assertDatabaseMissing('basket_items', [
+        'user_id' => $user->id,
+        'watch_id' => $watch->id,
     ]);
 });
 

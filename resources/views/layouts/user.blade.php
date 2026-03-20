@@ -17,9 +17,9 @@
         </form>
       </div>
       <div class="right">
-        @auth
-          <a href="{{ route('wishlist.index') }}" class="nav-text-link">Wishlist</a>
-        @endauth
+        <a href="{{ route('wishlist.index') }}" aria-label="Wishlist">
+          <x-icon name="heart" class="icon" />
+        </a>
         <a href="{{ route('basket.index') }}">
           <x-icon name="shopping-cart" class="icon" />
         </a>
@@ -61,8 +61,9 @@
           <li>
             <a href="{{ route('contact.create') }}">CONTACT US</a>
           </li>
-          @auth
-          @endauth
+          <li>
+            <a href="{{ route('wishlist.index') }}">WISHLIST</a>
+          </li>
           <li>
             <a href="{{ route('basket.index') }}">BASKET</a>
           </li>
@@ -90,8 +91,9 @@
       <li>
         <a href="{{ route('contact.create') }}">CONTACT US</a>
       </li>
-      @auth
-      @endauth
+      <li>
+        <a href="{{ route('wishlist.index') }}">WISHLIST</a>
+      </li>
     </ul>
   </header>
   <div class="page">

@@ -1,6 +1,6 @@
 main {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .edit-form {
@@ -10,6 +10,10 @@ main {
 
 .credential-title {
   text-align: left;
+}
+
+.form-header {
+  margin-bottom: 0.5rem;
 }
 
 .credential-rows {
@@ -25,4 +29,14 @@ main {
 
 hr {
   border: 1px solid var(--stroke);
+}
+
+@media (max-width: 768px) {
+  .edit-form {
+    max-width: 100%;
+  }
+
+  .credential-rows {
+    gap: 1rem;
+  }
 }

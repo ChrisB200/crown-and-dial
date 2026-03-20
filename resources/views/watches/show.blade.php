@@ -5,6 +5,17 @@
 @endpush
 
 @section('page')
+  @if (session('error'))
+    <div class="alert alert-error">
+      {{ session('error') }}
+    </div>
+  @endif
+  @error('size')
+    <div class="alert alert-error">
+      {{ $message }}
+    </div>
+  @enderror
+
   <div class="watch-container">
   <div>
     <section class="watch">
@@ -30,6 +41,9 @@
             <h1 class="watch-brand">{{ strtoupper($watch->brand->name) }}</h1>
             <p class="watch-name">{{ $watch->name }}</p>
             <p class="watch-price">£{{ number_format($watch->price) }}</p>
+            <p class="stock-status stock-status-{{ str_replace(' ', '-', $stockStatus) }}">
+              {{ strtoupper($stockStatus) }}
+            </p>
           </div>
           <div class="watch-sizes">
             <p>Size</p>
@@ -41,26 +55,24 @@
             </div>
           </div>
           <div class="watch-actions">
-            <form method="POST" action="{{ route('basket.store', $watch->id) }}">
+            <form method="POST" action="{{ route('basket.store', $watch->id) }}" id="add-to-bag-form">
               @csrf
               <input type="hidden" name="size" id="selected-size">
               <button class="accent-button" type="submit">Add to Bag</button>
             </form>
 
-            @auth
-              @if ($inWishlist)
-                <form method="POST" action="{{ route('wishlist.destroy', $watch) }}">
-                  @csrf
-                  @method('DELETE')
-                  <button class="secondary-button" type="submit">Remove from Wishlist</button>
-                </form>
-              @else
-                <form method="POST" action="{{ route('wishlist.store', $watch) }}">
-                  @csrf
-                  <button class="secondary-button" type="submit">Add to Wishlist</button>
-                </form>
-              @endif
-            @endauth
+            @if ($inWishlist)
+              <form method="POST" action="{{ route('wishlist.destroy', $watch) }}">
+                @csrf
+                @method('DELETE')
+                <button class="secondary-button" type="submit">Remove from Wishlist</button>
+              </form>
+            @else
+              <form method="POST" action="{{ route('wishlist.store', $watch) }}">
+                @csrf
+                <button class="secondary-button" type="submit">Add to Wishlist</button>
+              </form>
+            @endif
           </div>
         </div>
         <div class="watch-bottom">
@@ -115,6 +127,22 @@
   </section>
   </div>
   <script>
+    const addToBagForm = document.getElementById('add-to-bag-form');
+    const selectedSizeInput = document.getElementById('selected-size');
+    const showBagSizeError = (message) => {
+      const existing = document.getElementById('bag-size-error');
+      if (existing) {
+        existing.textContent = message;
+        return;
+      }
+
+      const errorDiv = document.createElement('div');
+      errorDiv.id = 'bag-size-error';
+      errorDiv.className = 'alert alert-error';
+      errorDiv.textContent = message;
+      addToBagForm.insertAdjacentElement('beforebegin', errorDiv);
+    };
+
     document.querySelectorAll('.size').forEach(button => {
       button.addEventListener('click', () => {
 
@@ -122,10 +150,23 @@
 
         button.classList.add('accent-button');
 
-        document.getElementById('selected-size').value = button.dataset.size;
+        selectedSizeInput.value = button.dataset.size;
+
+        const existing = document.getElementById('bag-size-error');
+        if (existing) {
+          existing.remove();
+        }
 
       });
     });
+
+    addToBagForm.addEventListener('submit', (event) => {
+      if (!selectedSizeInput.value) {
+        event.preventDefault();
+        showBagSizeError('Please select a watch size before adding to bag.');
+      }
+    });
+
     const modal = document.getElementById('imageModal');
     const modalImage = document.getElementById('modalImage');
     const mainImage = document.querySelector('.watch-image');

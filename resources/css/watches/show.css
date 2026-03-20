@@ -43,6 +43,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
     cursor: zoom-in;
 }
 
@@ -76,25 +77,48 @@
 .watch-content {
     flex: 1;
     width: 100%;
-    text-align: center;
+    text-align: left;
 }
 
 .watch-top {
     display: flex;
     flex-direction: column;
     gap: 2rem;
-    align-items: center;
+    align-items: flex-start;
 }
 
 .watch-important {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    align-items: center;
+    align-items: flex-start;
 }
 
 .watch-price {
     font-size: 1.5rem;
+}
+
+.stock-status {
+    font-weight: bold;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid var(--stroke);
+    font-size: 0.85rem;
+}
+
+.stock-status-in-stock {
+    background: #e8f5e9;
+    color: #1b5e20;
+}
+
+.stock-status-low-stock {
+    background: #fff8e1;
+    color: #8a5a00;
+}
+
+.stock-status-out-of-stock {
+    background: #ffebee;
+    color: #b71c1c;
 }
 
 .watch-sizes > p {
@@ -104,7 +128,7 @@
 .watch-sizes {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
 }
 
 .watch-buttons {
@@ -112,7 +136,7 @@
     flex-wrap: wrap;
     gap: 0.5rem 1rem;
     margin-top: 0.5rem;
-    justify-content: center;
+    justify-content: flex-start;
 }
 
 .size {
@@ -131,14 +155,6 @@ hr {
 }
 
 /* ===== Form ===== */
-
-form {
-    width: 100%;
-}
-
-form > button {
-    width: 100%;
-}
 
 /* ===== Modal ===== */
 
@@ -185,8 +201,36 @@ form > button {
         padding: 1rem;
     }
 
+    .watch-content {
+        text-align: center;
+    }
+
+    .watch-top,
+    .watch-important,
+    .watch-sizes {
+        align-items: center;
+    }
+
+    .watch-buttons {
+        justify-content: center;
+    }
+
+    .watch-actions {
+        justify-content: center;
+    }
+
+    .watch-images {
+        width: 100%;
+        align-items: center;
+    }
+
     .watch-image-container {
         max-width: 100%;
+        margin: 0 auto;
+    }
+
+    .watch-thumbnails {
+        justify-content: center;
     }
 }
 
@@ -239,7 +283,16 @@ form > button {
 
 .watch-actions {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: 1rem;
     align-items: center;
+}
+
+.watch-actions form {
+    width: auto;
+}
+
+.watch-actions form > button {
+    width: auto;
 }

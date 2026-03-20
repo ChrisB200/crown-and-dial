@@ -8,9 +8,8 @@
   <form class="edit-form" method="post" action="{{ route('password.update') }}">
     @csrf
     @method('put')
-    <div>
+    <div class="form-header">
       <h2 class="credential-title">Change Password</h2>
-      <br />
       <hr />
     </div>
     <div class="credential-rows">

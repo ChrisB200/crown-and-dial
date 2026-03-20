@@ -1,0 +1,246 @@
+:root {
+  --primary: #ffffff;
+  --accent: #2d3132;
+  --stroke: #dce0e0;
+  --muted: #fbfbfb;
+  --error: red;
+}
+
+body,
+.page-content,
+.content-inner,
+.container-fluid {
+  background-color: var(--primary) !important;
+  color: var(--accent) !important;
+}
+
+a,
+p,
+span,
+small,
+label,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--accent);
+}
+
+.header,
+.navbar {
+  background: var(--primary) !important;
+  border-bottom: 1px solid var(--stroke) !important;
+}
+
+.navbar .navbar-brand strong,
+.navbar .nav-link,
+.navbar .dropdown-toggle,
+.navbar .dropdown-item {
+  color: var(--accent) !important;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link:focus,
+.navbar .dropdown-toggle:hover,
+.navbar .dropdown-toggle:focus {
+  color: var(--accent) !important;
+  background-color: var(--muted) !important;
+}
+
+.navbar .nav-link:hover i,
+.navbar .nav-link:focus i,
+.navbar .dropdown-toggle:hover i,
+.navbar .dropdown-toggle:focus i,
+.navbar .dropdown-item:hover i,
+.navbar .dropdown-item:focus i {
+  color: var(--accent) !important;
+}
+
+.navbar .dropdown-item:hover,
+.navbar .dropdown-item:focus {
+  color: var(--accent) !important;
+  background-color: var(--muted) !important;
+}
+
+/* Prevent navbar icon fade from legacy theme */
+.navbar i,
+.navbar .nav-link i,
+.navbar .dropdown-toggle i,
+.navbar .dropdown-item i {
+  opacity: 1 !important;
+  color: var(--accent) !important;
+}
+
+.navbar .nav-link:hover i,
+.navbar .nav-link:focus i,
+.navbar .dropdown-toggle:hover i,
+.navbar .dropdown-toggle:focus i,
+.navbar .dropdown-item:hover i,
+.navbar .dropdown-item:focus i {
+  opacity: 1 !important;
+}
+
+#sidebar {
+  background: var(--muted) !important;
+  border-right: 1px solid var(--stroke) !important;
+}
+
+#sidebar .sidebar-header,
+#sidebar ul li a,
+#sidebar .heading,
+#sidebar p,
+#sidebar h1 {
+  color: var(--accent) !important;
+}
+
+#sidebar ul li a:hover,
+#sidebar ul li.active > a {
+  background: var(--primary) !important;
+  color: var(--accent) !important;
+}
+
+.page-header {
+  background: var(--primary) !important;
+  border-bottom: 1px solid var(--stroke) !important;
+}
+
+.block,
+.card,
+.statistic-block,
+.stats-with-chart-1,
+.stats-with-chart-2,
+.stats-with-chart-3,
+.stats-2-block,
+.chart,
+.line-chart {
+  background: var(--primary) !important;
+  color: var(--accent) !important;
+  border: 1px solid var(--stroke) !important;
+  box-shadow: none !important;
+}
+
+.table,
+.table td,
+.table th {
+  color: var(--accent) !important;
+  border-color: var(--stroke) !important;
+}
+
+.form-control,
+.custom-select,
+textarea,
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="password"] {
+  background: var(--muted) !important;
+  color: var(--accent) !important;
+  border: 1px solid var(--stroke) !important;
+}
+
+.form-control:focus,
+.custom-select:focus {
+  border-color: var(--accent) !important;
+  box-shadow: none !important;
+}
+
+.btn-primary {
+  background-color: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: var(--primary) !important;
+}
+
+.btn-secondary,
+.btn-light {
+  background-color: var(--muted) !important;
+  border-color: var(--stroke) !important;
+  color: var(--accent) !important;
+}
+
+.dropdown-menu {
+  background: var(--primary) !important;
+  border: 1px solid var(--stroke) !important;
+}
+
+.alert-success,
+.alert-danger,
+.alert-warning,
+.alert-info {
+  border: 1px solid var(--stroke) !important;
+}
+
+/* Force readable text for legacy dark-theme utility classes */
+.dashtext-1,
+.dashtext-2,
+.dashtext-3,
+.dashtext-4,
+.text-white,
+.text-light,
+.text-gray-light,
+.text-muted {
+  color: var(--accent) !important;
+}
+
+.block .title,
+.block .title strong,
+.block .number,
+.card .card-header,
+.card .card-body,
+.statistic-block .icon i {
+  color: var(--accent) !important;
+}
+
+.badge-secondary,
+.badge-light {
+  background-color: var(--muted) !important;
+  color: var(--accent) !important;
+  border: 1px solid var(--stroke) !important;
+}
+
+.table-striped tbody tr:nth-of-type(odd),
+.table-striped tbody tr:nth-of-type(even) {
+  background-color: transparent !important;
+}
+
+.table a,
+.block a,
+.card a {
+  color: var(--accent) !important;
+}
+
+/* Inventory/table readability when legacy dark table classes are used */
+.table-dark,
+.table-dark th,
+.table-dark td,
+.table-dark thead th,
+.table-dark tbody + tbody {
+  background-color: var(--primary) !important;
+  color: var(--accent) !important;
+  border-color: var(--stroke) !important;
+}
+
+.table-dark.table-striped tbody tr:nth-of-type(odd),
+.table-dark.table-striped tbody tr:nth-of-type(even) {
+  background-color: var(--muted) !important;
+}
+
+/* Stock level badges */
+.badge-success {
+  background-color: #e8f5e9 !important;
+  color: #1b5e20 !important;
+  border: 1px solid #c8e6c9 !important;
+}
+
+.badge-warning {
+  background-color: #fff8e1 !important;
+  color: #8a5a00 !important;
+  border: 1px solid #ffe082 !important;
+}
+
+.badge-danger {
+  background-color: #ffebee !important;
+  color: #b71c1c !important;
+  border: 1px solid #ffcdd2 !important;
+}

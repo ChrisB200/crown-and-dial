@@ -1,5 +1,43 @@
-h1 {
+.credential-title {
   padding: 1rem 2rem;
+  text-align: left;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.account-empty-state {
+  border: 1px solid var(--stroke);
+  background: var(--muted);
+  padding: 3rem 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: center;
+  margin: 1rem 2rem;
+  box-sizing: border-box;
+}
+
+.accent-link {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.85rem 1.5rem;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--primary);
+  border-radius: var(--border-radius);
+  margin-top: 0.75rem;
+}
+
+.accent-link:hover {
+  text-decoration: none;
+  opacity: 0.9;
 }
 
 .messages {
@@ -31,4 +69,50 @@ h1 {
   white-space: normal;
   word-wrap: break-word;
   overflow-wrap: break-word;
+}
+
+@media (max-width: 1024px) {
+  .credential-title {
+    padding: 1rem 1.25rem;
+  }
+
+  .messages {
+    padding: 1rem 1.25rem;
+    gap: 1.25rem;
+  }
+
+  .message {
+    padding: 1.25rem;
+  }
+
+  .account-empty-state {
+    margin: 1rem 1.25rem;
+    padding: 2.25rem 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .credential-title {
+    padding: 1rem;
+  }
+
+  .messages {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .message {
+    padding: 1rem;
+  }
+
+  .account-empty-state {
+    margin: 1rem;
+    padding: 2rem 1rem;
+  }
+
+  .message-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
 }

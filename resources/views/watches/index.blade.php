@@ -5,6 +5,12 @@
 @endpush
 
 @section('page')
+  @if (session('error'))
+    <div class="alert alert-error">
+      {{ session('error') }}
+    </div>
+  @endif
+
   <section class="hero">
     <h2 class="section-title">
       OUR CATALOG
@@ -87,22 +93,20 @@
               <p class="watch-price">£{{ number_format($watch->price) }}</p>
             </div>
           </a>
-          @auth
-            <div class="watch-card-actions">
-              @if (in_array($watch->id, $wishlistIds ?? []))
-                <form method="POST" action="{{ route('wishlist.destroy', $watch) }}">
-                  @csrf
-                  @method('DELETE')
-                  <button type="submit" class="secondary-button wishlist-button">Remove from Wishlist</button>
-                </form>
-              @else
-                <form method="POST" action="{{ route('wishlist.store', $watch) }}">
-                  @csrf
-                  <button type="submit" class="secondary-button wishlist-button">Add to Wishlist</button>
-                </form>
-              @endif
-            </div>
-          @endauth
+          <div class="watch-card-actions">
+            @if (in_array($watch->id, $wishlistIds ?? []))
+              <form method="POST" action="{{ route('wishlist.destroy', $watch) }}">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="secondary-button wishlist-button">Remove from Wishlist</button>
+              </form>
+            @else
+              <form method="POST" action="{{ route('wishlist.store', $watch) }}">
+                @csrf
+                <button type="submit" class="secondary-button wishlist-button">Add to Wishlist</button>
+              </form>
+            @endif
+          </div>
         </article>
       @endforeach
     </div>

@@ -20,6 +20,7 @@
       </ul>
     </div>
   @endif
+  <div id="basket-live-error" class="alert alert-error hidden"></div>
   <section>
     <h2 class="section-title">YOUR SHOPPING BAG</h2>
 
@@ -82,6 +83,8 @@
 
         const itemId = input.dataset.id;
         const quantity = input.value;
+        const previousValue = input.dataset.previousValue || input.defaultValue;
+        const liveError = document.getElementById('basket-live-error');
 
         fetch(`/basket/${itemId}`, {
           method: 'PATCH',
@@ -92,6 +95,22 @@
           body: JSON.stringify({
             quantity
           })
+        })
+        .then(async (response) => {
+          if (!response.ok) {
+            const data = await response.json().catch(() => ({}));
+            throw new Error(data.message || 'Unable to update quantity due to stock limits.');
+          }
+
+          input.dataset.previousValue = input.value;
+          liveError.classList.add('hidden');
+          liveError.textContent = '';
+        })
+        .catch((error) => {
+          input.value = previousValue;
+          updateTotal();
+          liveError.textContent = error.message;
+          liveError.classList.remove('hidden');
         });
       });
     });

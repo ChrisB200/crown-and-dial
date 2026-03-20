@@ -48,7 +48,7 @@
 }
 
 .wishlist-image-container {
-    width: 300px;
+    width: 100%;
     aspect-ratio: 1;
     background: var(--muted);
     overflow: hidden;
@@ -133,6 +133,8 @@
     border: 1px solid var(--stroke);
     padding: 0.75rem 1rem;
     border-radius: var(--border-radius);
+    background: var(--muted);
+    color: var(--accent);
 }
 
 .btn.disabled {
@@ -146,5 +148,16 @@
 
     .pagination {
         flex-direction: column;
+    }
+}
+
+@media (max-width: 1024px) {
+    .wishlist-page {
+        padding: 1.25rem;
+    }
+
+    .pagination {
+        flex-wrap: wrap;
+        justify-content: center;
     }
 }

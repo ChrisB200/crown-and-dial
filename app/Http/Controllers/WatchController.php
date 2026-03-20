@@ -45,11 +45,14 @@ class WatchController extends Controller
 
     public function show(Watch $watch)
     {
+        $watch->load('inventory');
+        $stockStatus = $watch->stockStatus();
+
         $inWishlist = auth()->check()
             ? auth()->user()->wishlistWatches()->where('watch_id', $watch->id)->exists()
             : false;
 
-        return view('watches.show', compact('watch', 'inWishlist'));
+        return view('watches.show', compact('watch', 'inWishlist', 'stockStatus'));
     }
 
     public function category(string $slug, Request $request)

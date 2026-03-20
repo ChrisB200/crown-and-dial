@@ -43,6 +43,11 @@ class BasketController extends Controller
             'size' => 'required',
         ]);
 
+        $availableQty = $watch->inventory?->quantity ?? 0;
+        if ($availableQty <= 0) {
+            return back()->with('error', 'This watch is currently out of stock.');
+        }
+
         $userId = $request->user()->id;
         $size = $request->size;
 
@@ -52,6 +57,10 @@ class BasketController extends Controller
             ->first();
 
         if ($existingItem) {
+            if (($existingItem->quantity + 1) > $availableQty) {
+                return back()->with('error', 'Cannot add more of this watch. Not enough stock available.');
+            }
+
             $existingItem->quantity += 1;
             $existingItem->save();
         } else {
@@ -90,6 +99,14 @@ class BasketController extends Controller
         $request->validate([
             'quantity' => 'required|integer|min:1'
         ]);
+
+        $availableQty = $item->watch->inventory?->quantity ?? 0;
+        if ($request->quantity > $availableQty) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Requested quantity exceeds available stock.',
+            ], 422);
+        }
 
         $item->quantity = $request->quantity;
         $item->save();

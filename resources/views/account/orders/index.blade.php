@@ -86,8 +86,11 @@
         </div>
 
     @empty
-        <div class="order-row">
-            <p>You have not placed any orders yet.</p>
+        <div class="account-empty-state">
+            <p class="eyebrow">No order history yet</p>
+            <h3>No orders in your account.</h3>
+            <p>When you place your first order, it will appear here with full order details.</p>
+            <a href="{{ route('watches.index') }}" class="accent-link">Explore Watches</a>
         </div>
     @endforelse
 
