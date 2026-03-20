@@ -26,13 +26,20 @@ class WatchController extends Controller
 
         $watches = $query->latest()->paginate(12)->withQueryString();
         $categoryName = 'ALL';
+        $wishlistIds = auth()->check()
+            ? auth()->user()->wishlistWatches()->pluck('watch_id')->all()
+            : [];
 
-        return view('watches.index', compact('watches', 'categoryName', 'search'));
+        return view('watches.index', compact('watches', 'categoryName', 'search', 'wishlistIds'));
     }
 
     public function show(Watch $watch)
     {
-        return view('watches.show', compact('watch'));
+        $inWishlist = auth()->check()
+            ? auth()->user()->wishlistWatches()->where('watch_id', $watch->id)->exists()
+            : false;
+
+        return view('watches.show', compact('watch', 'inWishlist'));
     }
 
     public function category(string $slug, Request $request)
@@ -47,7 +54,10 @@ class WatchController extends Controller
 
         $watches = $query->paginate(12)->withQueryString();
         $categoryName = strtoupper($category->name);
+        $wishlistIds = auth()->check()
+            ? auth()->user()->wishlistWatches()->pluck('watch_id')->all()
+            : [];
 
-        return view('watches.index', compact('watches', 'categoryName', 'search'));
+        return view('watches.index', compact('watches', 'categoryName', 'search', 'wishlistIds'));
     }
 }

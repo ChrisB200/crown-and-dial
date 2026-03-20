@@ -17,6 +17,7 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WatchController;
+use App\Http\Controllers\WishlistController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -70,6 +71,16 @@ Route::middleware(['auth'])
         Route::post('/', [CheckoutController::class, 'store'])->name('store');
     });
 
+
+Route::middleware(['auth'])
+    ->prefix('wishlist')
+    ->name('wishlist.')
+    ->group(function () {
+        Route::get('/', [WishlistController::class, 'index'])->name('index');
+        Route::post('/{watch}', [WishlistController::class, 'store'])->name('store');
+        Route::delete('/{watch}', [WishlistController::class, 'destroy'])->name('destroy');
+    });
+
 Route::middleware(['auth', 'admin', 'force_password_change'])
     ->prefix('admin')
     ->name('admin.')
@@ -110,6 +121,7 @@ Route::middleware(['auth'])
         Route::delete('/profile', [UserController::class, 'destroy'])->name('profile.destroy');
         Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
         Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+        Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
     });
 
 use App\Http\Controllers\ReviewController;

@@ -92,4 +92,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Message::class);
     }
+
+    public function wishlistWatches()
+    {
+        return $this->belongsToMany(Watch::class, 'wishlists')->withTimestamps();
+    }
 }

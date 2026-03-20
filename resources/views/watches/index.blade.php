@@ -29,16 +29,34 @@
     </div>
     <div class="watches" id="watches">
       @foreach ($watches as $watch)
-        <a class="watch" href="{{ route('watches.show', compact('watch')) }}">
-          <div class="watch-image-container">
-            <img class="watch-image" src="{{ $watch->firstImage->url }}" />
-          </div>
-          <div class="watch-content">
-            <p class="watch-brand">{{ strtoupper($watch->brand->name) }}</p>
-            <p class="watch-name">{{ $watch->name }}</p>
-            <p class="watch-price">£{{ number_format($watch->price) }}</p>
-          </div>
-        </a>
+        <article class="watch-card">
+          <a class="watch" href="{{ route('watches.show', compact('watch')) }}">
+            <div class="watch-image-container">
+              <img class="watch-image" src="{{ $watch->firstImage->url }}" alt="{{ $watch->name }}" />
+            </div>
+            <div class="watch-content">
+              <p class="watch-brand">{{ strtoupper($watch->brand->name) }}</p>
+              <p class="watch-name">{{ $watch->name }}</p>
+              <p class="watch-price">£{{ number_format($watch->price) }}</p>
+            </div>
+          </a>
+          @auth
+            <div class="watch-card-actions">
+              @if (in_array($watch->id, $wishlistIds ?? []))
+                <form method="POST" action="{{ route('wishlist.destroy', $watch) }}">
+                  @csrf
+                  @method('DELETE')
+                  <button type="submit" class="secondary-button wishlist-button">Remove from Wishlist</button>
+                </form>
+              @else
+                <form method="POST" action="{{ route('wishlist.store', $watch) }}">
+                  @csrf
+                  <button type="submit" class="secondary-button wishlist-button">Add to Wishlist</button>
+                </form>
+              @endif
+            </div>
+          @endauth
+        </article>
       @endforeach
     </div>
     <div class="pagination">

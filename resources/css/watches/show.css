@@ -224,3 +224,10 @@ form > button {
     color: #888;
     font-size: 0.8rem;
 }
+
+
+.watch-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}

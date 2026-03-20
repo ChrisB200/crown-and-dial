@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.aptpdmin')
 
 @section('title', 'Admin Dashboard')
 @section('page_title', 'Dashboard')

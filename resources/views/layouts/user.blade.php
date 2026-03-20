@@ -17,6 +17,9 @@
         </form>
       </div>
       <div class="right">
+        @auth
+          <a href="{{ route('wishlist.index') }}" class="nav-text-link">Wishlist</a>
+        @endauth
         <a href="{{ route('basket.index') }}">
           <x-icon name="shopping-cart" class="icon" />
         </a>
@@ -58,6 +61,11 @@
           <li>
             <a href="{{ route('contact.create') }}">CONTACT US</a>
           </li>
+          @auth
+          <li>
+            <a href="{{ route('wishlist.index') }}">WISHLIST</a>
+          </li>
+          @endauth
           <li>
             <a href="{{ route('basket.index') }}">BASKET</a>
           </li>
@@ -85,6 +93,11 @@
       <li>
         <a href="{{ route('contact.create') }}">CONTACT US</a>
       </li>
+      @auth
+      <li>
+        <a href="{{ route('wishlist.index') }}">WISHLIST</a>
+      </li>
+      @endauth
     </ul>
   </header>
   <div class="page">
@@ -104,6 +117,13 @@
       </ul>
     </div>
   </footer>
+  <style>
+    .nav-text-link {
+      font-size: 0.95rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+  </style>
   <script>
     const mobileMenu = document.getElementById("mobile-menu");
     const menuIcon = document.getElementById("menu-icon");

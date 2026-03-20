@@ -66,6 +66,11 @@ class Watch extends Model
         return $this->hasMany(WatchImage::class)->orderBy('position');
     }
 
+    public function wishlistedByUsers()
+    {
+        return $this->belongsToMany(User::class, 'wishlists')->withTimestamps();
+    }
+
     public function stockStatus(int $lowThreshold = 5): string
     {
         $qty = $this->inventory?->quantity ?? 0;

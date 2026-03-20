@@ -40,11 +40,28 @@
               <button class="size" data-size="42">42mm</button>
             </div>
           </div>
-          <form method="POST" action="{{ route('basket.store', $watch->id) }}">
-            @csrf
-            <input type="hidden" name="size" id="selected-size">
-            <button class="accent-button" type="submit">Add to Bag</button>
-          </form>
+          <div class="watch-actions">
+            <form method="POST" action="{{ route('basket.store', $watch->id) }}">
+              @csrf
+              <input type="hidden" name="size" id="selected-size">
+              <button class="accent-button" type="submit">Add to Bag</button>
+            </form>
+
+            @auth
+              @if ($inWishlist)
+                <form method="POST" action="{{ route('wishlist.destroy', $watch) }}">
+                  @csrf
+                  @method('DELETE')
+                  <button class="secondary-button" type="submit">Remove from Wishlist</button>
+                </form>
+              @else
+                <form method="POST" action="{{ route('wishlist.store', $watch) }}">
+                  @csrf
+                  <button class="secondary-button" type="submit">Add to Wishlist</button>
+                </form>
+              @endif
+            @endauth
+          </div>
         </div>
         <div class="watch-bottom">
           <p><strong>Description</strong></p>
