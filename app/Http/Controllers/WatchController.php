@@ -11,6 +11,8 @@ class WatchController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('q'); // ← unified input name
+        $minPrice = $request->input('min_price');
+        $maxPrice = $request->input('max_price');
 
         $query = Watch::with('brand', 'category', 'reviews.user');
 
@@ -22,6 +24,14 @@ class WatchController extends Controller
                         $b->where('name', 'like', "%{$search}%");
                     });
             });
+        }
+
+        if ($minPrice !== null && $minPrice !== '') {
+            $query->where('price', '>=', (float) $minPrice);
+        }
+
+        if ($maxPrice !== null && $maxPrice !== '') {
+            $query->where('price', '<=', (float) $maxPrice);
         }
 
         $watches = $query->latest()->paginate(12)->withQueryString();
@@ -48,8 +58,20 @@ class WatchController extends Controller
 
         $query = Watch::where('category_id', $category->id);
 
-        if ($search = $request->input('q')) {
+        $search = $request->input('q');
+        $minPrice = $request->input('min_price');
+        $maxPrice = $request->input('max_price');
+
+        if ($search) {
             $query->where('name', 'LIKE', "%{$search}%");
+        }
+
+        if ($minPrice !== null && $minPrice !== '') {
+            $query->where('price', '>=', (float) $minPrice);
+        }
+
+        if ($maxPrice !== null && $maxPrice !== '') {
+            $query->where('price', '<=', (float) $maxPrice);
         }
 
         $watches = $query->paginate(12)->withQueryString();

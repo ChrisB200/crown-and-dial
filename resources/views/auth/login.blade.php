@@ -9,6 +9,12 @@
 
   <x-logo class="logo-container" />
 
+  @if ($errors->any())
+    <div style="color: var(--error); font-weight: bold; text-align: center;" role="alert">
+      {{ $errors->first() }}
+    </div>
+  @endif
+
   <form class="credential-form" method="POST" action="{{ route('login') }}">
     @csrf
 
@@ -20,7 +26,7 @@
       <label for="email">Email</label>
       <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus>
       @error('email')
-        <div>{{ $message }}</div>
+        <div style="color: var(--error); font-weight: bold;">{{ $message }}</div>
       @enderror
     </div>
 
@@ -29,7 +35,7 @@
       <label for="password">Password</label>
       <input id="password" type="password" name="password" required>
       @error('password')
-        <div>{{ $message }}</div>
+        <div style="color: var(--error); font-weight: bold;">{{ $message }}</div>
       @enderror
     </div>
 

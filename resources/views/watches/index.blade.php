@@ -23,6 +23,53 @@
       @if ($search)
         <p>Searching for results: <strong>{{ $search }}</strong></p>
       @endif
+
+      @php
+        $priceFilterQuery = request()->except(['min_price', 'max_price']);
+      @endphp
+
+      <form method="GET" action="{{ url()->current() }}">
+        <input type="hidden" name="q" value="{{ request('q') }}">
+
+        <div style="display: flex; gap: 1rem; justify-content: center; align-items: end; flex-wrap: wrap;">
+          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <label for="min_price">Min price</label>
+            <input
+              id="min_price"
+              type="number"
+              step="0.01"
+              name="min_price"
+              value="{{ request('min_price') }}"
+              placeholder="0.00"
+            >
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <label for="max_price">Max price</label>
+            <input
+              id="max_price"
+              type="number"
+              step="0.01"
+              name="max_price"
+              value="{{ request('max_price') }}"
+              placeholder="0.00"
+            >
+          </div>
+
+          <button class="accent-button" type="submit" style="padding: 0.75rem 1.5rem;">
+            Filter
+          </button>
+
+          <a
+            class="secondary-button"
+            href="{{ url()->current() . (count($priceFilterQuery) ? ('?' . http_build_query($priceFilterQuery)) : '') }}"
+            style="display: inline-flex; align-items: center; justify-content: center; text-decoration: none; padding: 0.75rem 1.5rem;"
+          >
+            Clear
+          </a>
+        </div>
+      </form>
+
       @if (count($watches) === 0)
         <p>Sorry, we could not find any watches matching this criteria</p>
       @endif
