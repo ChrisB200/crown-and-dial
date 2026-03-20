@@ -17,9 +17,7 @@
         </form>
       </div>
       <div class="right">
-        <a href="{{ route('wishlist.index') }}" aria-label="Wishlist">
-          <x-icon name="heart" class="icon" />
-        </a>
+
         <a href="{{ route('basket.index') }}">
           <x-icon name="shopping-cart" class="icon" />
         </a>
