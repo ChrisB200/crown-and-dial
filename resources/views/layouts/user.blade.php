@@ -18,7 +18,6 @@
       </div>
       <div class="right">
         @auth
-          <a href="{{ route('wishlist.index') }}" class="nav-text-link">Wishlist</a>
         @endauth
         <a href="{{ route('basket.index') }}">
           <x-icon name="shopping-cart" class="icon" />
