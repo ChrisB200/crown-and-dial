@@ -50,7 +50,7 @@ class Order extends Model
     public function watches()
     {
         return $this->belongsToMany(Watch::class, 'watch_orders', 'order_id', 'watch_id')
-            ->withPivot('quantity');
+            ->withPivot(['quantity', 'size']);
     }
 
     public function watchOrders()

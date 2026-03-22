@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminMessageController;
 use App\Http\Controllers\Admin\AdminOrderController;
+use App\Http\Controllers\Admin\AdminProductReturnController;
 use App\Http\Controllers\Admin\AdminSetupController;
 use App\Http\Controllers\Admin\BrandController as AdminBrandController;
 use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
@@ -15,6 +17,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProductReturnController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WatchController;
 use App\Http\Controllers\WishlistController;
@@ -43,13 +46,14 @@ Route::middleware([])
         Route::get('/category/{slug}', [WatchController::class, 'category'])->name('category');
     });
 
+Route::get('/contact', [ContactController::class, 'create'])->name('contact.create');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+
 Route::middleware(['auth'])
     ->prefix('contact')
     ->name('contact.')
     ->group(function () {
         Route::get('/messages', [ContactController::class, 'index'])->name('index');
-        Route::get('/', [ContactController::class, 'create'])->name('create');
-        Route::post('/store', [ContactController::class, 'store'])->name('store');
     });
 
 Route::middleware(['auth'])
@@ -105,6 +109,14 @@ Route::middleware(['auth', 'admin', 'force_password_change'])
 
         Route::get('/reports', [AdminReportsController::class, 'index'])->name('reports.index');
 
+        Route::get('/messages', [AdminMessageController::class, 'index'])->name('messages.index');
+        Route::get('/messages/{message}', [AdminMessageController::class, 'show'])->name('messages.show');
+        Route::patch('/messages/{message}/reply', [AdminMessageController::class, 'reply'])->name('messages.reply');
+
+        Route::get('/returns', [AdminProductReturnController::class, 'index'])->name('returns.index');
+        Route::patch('/returns/{productReturn}/approve', [AdminProductReturnController::class, 'approve'])->name('returns.approve');
+        Route::patch('/returns/{productReturn}/reject', [AdminProductReturnController::class, 'reject'])->name('returns.reject');
+
         Route::get('/security', [AdminSecurityController::class, 'index'])->name('security');
 
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
@@ -121,6 +133,7 @@ Route::middleware(['auth'])
         Route::delete('/profile', [UserController::class, 'destroy'])->name('profile.destroy');
         Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
         Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+        Route::post('/orders/{order}/returns', [ProductReturnController::class, 'store'])->name('returns.store');
         Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
     });
 

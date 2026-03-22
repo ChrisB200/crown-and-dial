@@ -5,6 +5,11 @@
 @endpush
 
 @section('page')
+  @if (session('success'))
+    <div class="alert alert-success" style="max-width: 720px; margin: 1rem auto 0; padding: 0.75rem 1rem;">
+      {{ session('success') }}
+    </div>
+  @endif
   <section class="hero">
     <h2 class="section-title">
       CROWN & DIAL

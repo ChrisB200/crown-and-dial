@@ -16,7 +16,7 @@ class BasketController extends Controller
         $user = $request->user();
 
         $basket = BasketItem::where("user_id", $user->id)
-            ->with("watch")
+            ->with("watch.inventorySizes")
             ->get();
 
         $total = $basket->sum(function ($item) {
@@ -24,14 +24,6 @@ class BasketController extends Controller
         });
 
         return view("basket.index", compact("basket", "total"));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -43,13 +35,15 @@ class BasketController extends Controller
             'size' => 'required',
         ]);
 
-        $availableQty = $watch->inventory?->quantity ?? 0;
+        $watch->load('inventorySizes');
+        $size = (int) $request->size;
+        $availableQty = $watch->quantityForSize($size);
+
         if ($availableQty <= 0) {
-            return back()->with('error', 'This watch is currently out of stock.');
+            return back()->with('error', 'This size is currently out of stock.');
         }
 
         $userId = $request->user()->id;
-        $size = $request->size;
 
         $existingItem = BasketItem::where("user_id", $userId)
             ->where("watch_id", $watch->id)
@@ -58,7 +52,7 @@ class BasketController extends Controller
 
         if ($existingItem) {
             if (($existingItem->quantity + 1) > $availableQty) {
-                return back()->with('error', 'Cannot add more of this watch. Not enough stock available.');
+                return back()->with('error', 'Cannot add more of this watch in the selected size. Not enough stock available.');
             }
 
             $existingItem->quantity += 1;
@@ -76,22 +70,6 @@ class BasketController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, BasketItem $item)
@@ -100,11 +78,13 @@ class BasketController extends Controller
             'quantity' => 'required|integer|min:1'
         ]);
 
-        $availableQty = $item->watch->inventory?->quantity ?? 0;
+        $item->load('watch.inventorySizes');
+        $availableQty = $item->watch->quantityForSize((int) $item->size);
+
         if ($request->quantity > $availableQty) {
             return response()->json([
                 'success' => false,
-                'message' => 'Requested quantity exceeds available stock.',
+                'message' => 'Requested quantity exceeds available stock for this size.',
             ], 422);
         }
 

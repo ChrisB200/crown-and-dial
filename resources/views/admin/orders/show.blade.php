@@ -10,13 +10,14 @@
             <div class="title"><strong>Items</strong></div>
             <div class="table-responsive">
                 <table class="table table-striped">
-                    <thead><tr><th>Watch</th><th>Qty</th><th>Unit</th></tr></thead>
+                    <thead><tr><th>Watch</th><th>Size</th><th>Qty</th><th>Unit</th></tr></thead>
                     <tbody>
-                    @foreach($order->watches as $line)
+                    @foreach($order->watchOrders as $line)
                         <tr>
                             <td>{{ $line->watch?->name ?? ('Watch#'.$line->watch_id) }}</td>
-                            <td>{{ $line->quantity ?? 1 }}</td>
-                            <td>£{{ number_format((float)($line->price ?? 0), 2) }}</td>
+                            <td>{{ $line->size }}mm</td>
+                            <td>{{ $line->quantity }}</td>
+                            <td>£{{ number_format((float)($line->watch?->price ?? 0), 2) }}</td>
                         </tr>
                     @endforeach
                     </tbody>

@@ -244,3 +244,64 @@ input[type="password"] {
   color: #b71c1c !important;
   border: 1px solid #ffcdd2 !important;
 }
+
+/* Storefront-style primary actions in admin (dark fill, light text) */
+.accent-button {
+  display: inline-block;
+  font-weight: 700;
+  background-color: var(--accent) !important;
+  border: 1px solid var(--accent) !important;
+  color: var(--primary) !important;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  text-align: center;
+  text-decoration: none !important;
+  cursor: pointer;
+  line-height: 1.5;
+}
+
+a.accent-button:hover,
+a.accent-button:focus,
+button.accent-button:hover,
+button.accent-button:focus {
+  color: var(--primary) !important;
+  filter: brightness(1.08);
+  text-decoration: none !important;
+}
+
+button.accent-button {
+  appearance: none;
+}
+
+/* Global ".block a" / ".table a" rules above force dark text — restore contrast on filled buttons */
+.block a.btn-primary,
+.block a.btn-success,
+.block a.btn-danger,
+.block a.btn-dark,
+.block a.accent-button,
+.table a.btn-primary,
+.table a.btn-success,
+.table a.btn-danger,
+.table a.btn-dark,
+.table a.accent-button,
+.card a.btn-primary,
+.card a.btn-success,
+.card a.btn-danger,
+.card a.accent-button,
+.pagination a.btn-primary,
+.pagination a.accent-button {
+  color: var(--primary) !important;
+}
+
+.btn-success,
+.btn-danger,
+.btn-dark {
+  color: var(--primary) !important;
+}
+
+.admin-reply-preview {
+  padding: 1rem;
+  background: var(--muted);
+  border: 1px solid var(--stroke);
+  border-radius: 4px;
+}

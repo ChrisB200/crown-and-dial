@@ -89,4 +89,41 @@
         </div>
     </div>
 </div>
+
+<div class="row mt-4">
+    <div class="col-lg-12">
+        <div class="block">
+            <div class="title d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <strong>Recent customer messages</strong>
+                <a class="btn btn-sm accent-button" href="{{ route('admin.messages.index') }}">View all messages</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped mb-0">
+                    <thead>
+                    <tr>
+                        <th>From</th>
+                        <th>Subject</th>
+                        <th>Date</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @forelse($recentMessages as $msg)
+                        <tr class="{{ $msg->read_by_admin ? '' : 'table-info' }}">
+                            <td>{{ $msg->senderLabel() }}</td>
+                            <td>{{ \Illuminate\Support\Str::limit($msg->subject, 60) }}</td>
+                            <td>{{ $msg->created_at?->format('Y-m-d H:i') }}</td>
+                            <td>
+                                <a class="btn btn-sm accent-button" href="{{ route('admin.messages.show', $msg) }}">Open / reply</a>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="4" class="text-muted">No messages yet.</td></tr>
+                    @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection

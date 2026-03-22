@@ -71,6 +71,33 @@
   overflow-wrap: break-word;
 }
 
+.message-reply {
+  margin-top: 0.5rem;
+  padding: 1.25rem;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--stroke);
+  background: var(--muted);
+}
+
+.message-reply-label {
+  font-weight: 700;
+  margin: 0 0 0.35rem;
+}
+
+.message-reply-date {
+  font-size: 0.85rem;
+  color: var(--text-muted, #666);
+  margin: 0 0 0.75rem;
+}
+
+.message-reply-body {
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.5;
+}
+
 @media (max-width: 1024px) {
   .credential-title {
     padding: 1rem 1.25rem;

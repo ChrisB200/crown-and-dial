@@ -35,7 +35,7 @@
                         <td>{{ $watch->category?->name ?? '-' }}</td>
                         <td>{{ $watch->supplier?->name ?? '-' }}</td>
                         <td class="text-right">£{{ number_format((float)$watch->price, 2) }}</td>
-                        <td class="text-right">{{ $watch->inventory?->quantity ?? 0 }}</td>
+                        <td class="text-right">{{ $watch->inventorySizes->sum('quantity') }}</td>
                         <td class="text-right">
                             <a class="btn btn-sm btn-outline-secondary" href="{{ route('admin.watches.show', $watch) }}">View</a>
                             <a class="btn btn-sm btn-outline-info" href="{{ route('admin.watches.edit', $watch) }}">Edit</a>

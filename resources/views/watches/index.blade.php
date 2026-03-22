@@ -85,7 +85,7 @@
         <article class="watch-card">
           <a class="watch" href="{{ route('watches.show', compact('watch')) }}">
             <div class="watch-image-container">
-              <img class="watch-image" src="{{ $watch->firstImage->url }}" alt="{{ $watch->name }}" />
+              <img class="watch-image" src="{{ $watch->firstImage?->url }}" alt="{{ $watch->name }}" />
             </div>
             <div class="watch-content">
               <p class="watch-brand">{{ strtoupper($watch->brand->name) }}</p>

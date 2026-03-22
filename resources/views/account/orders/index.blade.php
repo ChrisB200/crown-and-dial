@@ -9,6 +9,13 @@
 <div class="orders-list">
     <h2>Past Orders</h2>
 
+    @if (session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+    @if (session('error'))
+        <div class="alert alert-error">{{ session('error') }}</div>
+    @endif
+
     @forelse($orders as $order)
 
         <div class="order-row">
@@ -28,10 +35,15 @@
 
             {{-- ===== Products ===== --}}
             <div class="order-products">
-                @foreach($order->watches as $watch)
-
+                @foreach($order->watchOrders as $line)
+                    @if($line->watch)
                     @php
+                        $watch = $line->watch;
                         $userReview = $watch->reviews?->firstWhere('user_id', auth()->id());
+                        $returnCommitted = (int) $line->productReturns
+                            ->whereIn('status', [\App\Models\ProductReturn::STATUS_PENDING, \App\Models\ProductReturn::STATUS_APPROVED])
+                            ->sum('quantity');
+                        $returnable = max(0, (int) $line->quantity - $returnCommitted);
                     @endphp
 
                     <div class="order-product">
@@ -47,11 +59,17 @@
 
                         {{-- Info --}}
                         <div class="order-product-info">
-                            <p class="product-name">{{ $watch->name }}</p>
+                            <p class="product-name">{{ $watch->name }} <span class="product-meta">({{ $line->size }}mm × {{ $line->quantity }})</span></p>
 
                             <p class="product-price">
                                 £{{ number_format($watch->price, 2) }}
                             </p>
+
+                            @foreach($line->productReturns as $pr)
+                                <p class="return-status"><small>Return #{{ $pr->id }}: <strong>{{ $pr->status }}</strong>
+                                    @if($pr->admin_notes) — {{ $pr->admin_notes }} @endif
+                                </small></p>
+                            @endforeach
 
                             <div class="product-actions">
 
@@ -67,19 +85,32 @@
                                     {{ $userReview ? 'Edit Review' : 'Leave Review' }}
                                 </button>
 
-                                {{-- Buy again --}}
+                                {{-- Buy again (same size) --}}
                                 <form method="POST" action="{{ route('basket.store', $watch->id) }}">
                                     @csrf
+                                    <input type="hidden" name="size" value="{{ $line->size }}">
                                     <button type="submit" class="accent-button">
                                         Buy Again
                                     </button>
                                 </form>
 
                             </div>
+
+                            @if($order->status === 'shipped' && $returnable > 0)
+                                <form class="return-request-form" method="POST" action="{{ route('account.returns.store', $order) }}">
+                                    @csrf
+                                    <input type="hidden" name="watch_order_id" value="{{ $line->id }}">
+                                    <label class="return-label">Request a return</label>
+                                    <input type="number" name="quantity" min="1" max="{{ $returnable }}" value="1" required class="return-qty">
+                                    <textarea name="reason" rows="2" placeholder="Reason for return" required class="return-reason"></textarea>
+                                    <button type="submit" class="secondary-button">Submit return request</button>
+                                </form>
+                            @endif
                         </div>
 
                     </div>
 
+                    @endif
                 @endforeach
             </div>
 

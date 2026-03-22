@@ -14,7 +14,7 @@ class WatchController extends Controller
         $minPrice = $request->input('min_price');
         $maxPrice = $request->input('max_price');
 
-        $query = Watch::with('brand', 'category', 'reviews.user');
+        $query = Watch::with('brand', 'category', 'reviews.user', 'firstImage');
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -45,21 +45,26 @@ class WatchController extends Controller
 
     public function show(Watch $watch)
     {
-        $watch->load('inventory');
+        $watch->load('inventorySizes');
         $stockStatus = $watch->stockStatus();
+
+        $sizeQuantities = [];
+        foreach (config('watch_sizes.band', [36, 38, 40, 42]) as $s) {
+            $sizeQuantities[$s] = $watch->quantityForSize((int) $s);
+        }
 
         $inWishlist = auth()->check()
             ? auth()->user()->wishlistWatches()->where('watch_id', $watch->id)->exists()
             : false;
 
-        return view('watches.show', compact('watch', 'inWishlist', 'stockStatus'));
+        return view('watches.show', compact('watch', 'inWishlist', 'stockStatus', 'sizeQuantities'));
     }
 
     public function category(string $slug, Request $request)
     {
         $category = Category::where('name', $slug)->firstOrFail();
 
-        $query = Watch::where('category_id', $category->id);
+        $query = Watch::where('category_id', $category->id)->with('brand', 'category', 'firstImage');
 
         $search = $request->input('q');
         $minPrice = $request->input('min_price');

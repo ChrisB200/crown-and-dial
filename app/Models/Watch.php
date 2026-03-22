@@ -51,9 +51,27 @@ class Watch extends Model
         return $this->hasMany(BasketItem::class);
     }
 
-    public function inventory()
+    public function inventorySizes()
     {
-        return $this->hasOne(Inventory::class);
+        return $this->hasMany(WatchInventorySize::class);
+    }
+
+    public function quantityForSize(int $size): int
+    {
+        if (! $this->relationLoaded('inventorySizes')) {
+            $this->load('inventorySizes');
+        }
+
+        return (int) ($this->inventorySizes->firstWhere('size', $size)?->quantity ?? 0);
+    }
+
+    public function totalStockQuantity(): int
+    {
+        if (! $this->relationLoaded('inventorySizes')) {
+            $this->load('inventorySizes');
+        }
+
+        return (int) $this->inventorySizes->sum('quantity');
     }
 
     public function firstImage()
@@ -73,7 +91,20 @@ class Watch extends Model
 
     public function stockStatus(int $lowThreshold = 5): string
     {
-        $qty = $this->inventory?->quantity ?? 0;
+        $qty = $this->totalStockQuantity();
+        if ($qty <= 0) {
+            return 'out of stock';
+        }
+        if ($qty < $lowThreshold) {
+            return 'low stock';
+        }
+
+        return 'in stock';
+    }
+
+    public function stockStatusForSize(int $size, int $lowThreshold = 5): string
+    {
+        $qty = $this->quantityForSize($size);
         if ($qty <= 0) {
             return 'out of stock';
         }

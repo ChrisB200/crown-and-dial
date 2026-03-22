@@ -143,6 +143,12 @@
     padding: 0.5rem 1.5rem;
 }
 
+.size:disabled,
+.size-unavailable {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
 /* ===== Bottom Section ===== */
 
 .watch-bottom {

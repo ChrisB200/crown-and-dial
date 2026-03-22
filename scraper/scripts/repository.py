@@ -1,5 +1,7 @@
 import logging
+import random
 import sqlite3
+from datetime import datetime, timezone
 
 import pymysql
 
@@ -106,8 +108,22 @@ class RepositoryService:
 
         watch_id = self.cursor.lastrowid
         self._create_watch_images(watch_id, watch["img_urls"])
+        self._seed_random_inventory_sizes(watch_id)
 
         logger.debug("Added watch %s to db", watch["name"])
+
+    def _seed_random_inventory_sizes(self, watch_id: int) -> None:
+        """Create per-size rows with random stock (36–42mm) for Laravel watch_inventory_sizes."""
+        ph = self.placeholder
+        now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+        sizes = (36, 38, 40, 42)
+        qry = f"""
+            INSERT INTO watch_inventory_sizes (watch_id, size, quantity, created_at, updated_at)
+            VALUES ({ph}, {ph}, {ph}, {ph}, {ph})
+        """
+        for size in sizes:
+            qty = random.randint(0, 25)
+            self.cursor.execute(qry, (watch_id, size, qty, now, now))
 
     # ===== PUBLIC =====
 

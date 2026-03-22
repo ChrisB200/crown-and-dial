@@ -1,3 +1,36 @@
+.return-request-form {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--stroke);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-width: 22rem;
+}
+
+.return-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.return-qty {
+    max-width: 6rem;
+}
+
+.return-reason {
+    width: 100%;
+    min-height: 3rem;
+}
+
+.product-meta {
+    font-size: 0.85rem;
+    color: var(--muted-foreground, #666);
+}
+
+.return-status {
+    margin: 0.25rem 0 0;
+}
+
 .orders-list {
     padding: 2rem;
 }

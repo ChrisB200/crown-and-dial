@@ -29,4 +29,9 @@ class WatchOrder extends Model
     {
         return $this->belongsTo(Watch::class);
     }
+
+    public function productReturns()
+    {
+        return $this->hasMany(ProductReturn::class);
+    }
 }

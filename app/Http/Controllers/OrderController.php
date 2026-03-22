@@ -15,7 +15,11 @@ class OrderController extends Controller
         $user = $request->user();
 
         $orders = Order::where("user_id", $user->id)
-            ->with("watches")
+            ->with([
+                'watchOrders.watch.firstImage',
+                'watchOrders.watch.reviews',
+                'watchOrders.productReturns',
+            ])
             ->latest()
             ->get();
 

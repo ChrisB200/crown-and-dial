@@ -17,15 +17,23 @@
     </div>
   @else
     <div class="messages">
-      @foreach ($messages as $message)
+      @foreach ($messages as $msg)
         <div class="message">
           <div class="message-header">
-            <h3 class="message-subject">{{ $message->subject }}</h3>
+            <h3 class="message-subject">{{ $msg->subject }}</h3>
             <p class="message-date">
-              {{ $message->created_at->format('d-m-Y H:i') }}
+              {{ $msg->created_at->format('d-m-Y H:i') }}
             </p>
           </div>
-          <p class="message-content">{{ $message->content }}</p>
+          <p class="message-content">{{ $msg->content }}</p>
+
+          @if($msg->admin_reply)
+            <div class="message-reply">
+              <p class="message-reply-label">Reply from Crown &amp; Dial</p>
+              <p class="message-reply-date">{{ $msg->replied_at?->format('d-m-Y H:i') }}</p>
+              <p class="message-reply-body">{{ $msg->admin_reply }}</p>
+            </div>
+          @endif
         </div>
       @endforeach
     </div>

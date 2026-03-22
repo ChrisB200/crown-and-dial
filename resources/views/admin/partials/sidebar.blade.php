@@ -17,6 +17,12 @@
         <li class="{{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
             <a href="{{ route('admin.orders.index') }}"> <i class="icon-new-file"></i>Orders</a>
         </li>
+        <li class="{{ request()->routeIs('admin.returns.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.returns.index') }}"> <i class="fa fa-undo"></i>Returns</a>
+        </li>
+        <li class="{{ request()->routeIs('admin.messages.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.messages.index') }}"> <i class="fa fa-envelope"></i>Messages</a>
+        </li>
         <li class="{{ request()->routeIs('admin.inventory.*') ? 'active' : '' }}">
             <a href="{{ route('admin.inventory.index') }}"> <i class="icon-grid"></i>Inventory</a>
         </li>

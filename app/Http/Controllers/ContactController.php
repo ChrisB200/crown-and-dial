@@ -28,47 +28,40 @@ class ContactController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            "subject" => "required|string",
-            "content" => "required|string",
+        $rules = [
+            'subject' => ['required', 'string', 'max:255'],
+            'content' => ['required', 'string', 'max:10000'],
+        ];
+
+        if ($request->user()) {
+            $request->validate($rules);
+
+            Message::create([
+                'user_id' => $request->user()->id,
+                'guest_name' => null,
+                'guest_email' => null,
+                'subject' => $request->subject,
+                'content' => $request->content,
+                'read_by_admin' => false,
+            ]);
+
+            return redirect()->route('account.messages.index')->with('success', 'Message sent successfully.');
+        }
+
+        $request->validate($rules + [
+            'guest_name' => ['required', 'string', 'max:255'],
+            'guest_email' => ['required', 'email', 'max:255'],
         ]);
 
-        $validated['user_id'] = $request->user()->id;
+        Message::create([
+            'user_id' => null,
+            'guest_name' => $request->guest_name,
+            'guest_email' => $request->guest_email,
+            'subject' => $request->subject,
+            'content' => $request->content,
+            'read_by_admin' => false,
+        ]);
 
-        Message::create($validated);
-
-        return redirect()->route("account.messages.index")->with("success", "Message sent successfully");
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return redirect()->route('home')->with('success', 'Thank you — we have received your message and will get back to you soon.');
     }
 }

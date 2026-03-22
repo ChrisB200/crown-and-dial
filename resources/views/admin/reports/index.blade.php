@@ -28,7 +28,7 @@
                     <thead><tr><th>Product</th><th>Qty</th><th>Status</th></tr></thead>
                     <tbody>
                     @foreach($stock as $w)
-                        @php($qty = $w->inventory?->quantity ?? 0)
+                        @php($qty = $w->totalStockQuantity())
                         @php($label = $w->stockStatus($lowThreshold))
                         <tr>
                             <td>{{ $w->name }}</td>

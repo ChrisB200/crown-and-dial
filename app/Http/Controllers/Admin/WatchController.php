@@ -7,6 +7,7 @@ use App\Models\Watch;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Supplier;
+use App\Models\WatchInventorySize;
 use Illuminate\Http\Request;
 
 class WatchController extends Controller
@@ -17,7 +18,7 @@ class WatchController extends Controller
     public function index()
     {
         $watches = Watch::query()
-            ->with(['brand', 'category', 'supplier', 'inventory'])
+            ->with(['brand', 'category', 'supplier', 'inventorySizes'])
             ->orderByDesc('created_at')
             ->paginate(20);
 
@@ -53,7 +54,14 @@ class WatchController extends Controller
             $validated["image_path"] = $request->file("image")->store("watches", "public");
         }
 
-        Watch::create($validated);
+        $watch = Watch::create($validated);
+
+        foreach (config('watch_sizes.band', [36, 38, 40, 42]) as $size) {
+            WatchInventorySize::query()->firstOrCreate(
+                ['watch_id' => $watch->id, 'size' => $size],
+                ['quantity' => 0]
+            );
+        }
 
         return redirect()->route("admin.watches.index")->with("success", "Watch created successfully");
     }

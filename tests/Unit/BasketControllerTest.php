@@ -3,7 +3,7 @@
 use App\Models\BasketItem;
 use App\Models\Brand;
 use App\Models\Category;
-use App\Models\Inventory;
+use App\Models\WatchInventorySize;
 use App\Models\Supplier;
 use App\Models\Watch;
 use App\Models\WatchImage;
@@ -50,6 +50,17 @@ function basketMakeWatchImage(Watch $watch, string $url = 'https://example.com/w
     ]);
 }
 
+function basketSeedInventory(Watch $watch, int $quantityForSize, int $size = 40): void
+{
+    foreach (config('watch_sizes.band', [36, 38, 40, 42]) as $s) {
+        WatchInventorySize::create([
+            'watch_id' => $watch->id,
+            'size' => $s,
+            'quantity' => (int) $s === $size ? $quantityForSize : 0,
+        ]);
+    }
+}
+
 test('adding an item to the basket creates a basket item', function () {
     $user = User::factory()->create();
 
@@ -58,10 +69,7 @@ test('adding an item to the basket creates a basket item', function () {
     $supplier = basketMakeSupplier('Tudor Supplier');
     $watch = basketMakeWatch($category, $brand, $supplier, 'Test Watch', '250.00');
     basketMakeWatchImage($watch);
-    Inventory::create([
-        'watch_id' => $watch->id,
-        'quantity' => 10,
-    ]);
+    basketSeedInventory($watch, 10, 40);
 
     $response = $this
         ->actingAs($user)
@@ -86,10 +94,7 @@ test('adding the same watch and size increments quantity', function () {
     $supplier = basketMakeSupplier('Tudor Supplier');
     $watch = basketMakeWatch($category, $brand, $supplier, 'Test Watch', '250.00');
     basketMakeWatchImage($watch);
-    Inventory::create([
-        'watch_id' => $watch->id,
-        'quantity' => 10,
-    ]);
+    basketSeedInventory($watch, 10, 40);
 
     $this
         ->actingAs($user)
@@ -150,10 +155,7 @@ test('updating basket quantity returns JSON and persists', function () {
     $supplier = basketMakeSupplier('Tudor Supplier');
     $watch = basketMakeWatch($category, $brand, $supplier, 'Test Watch', '250.00');
     basketMakeWatchImage($watch);
-    Inventory::create([
-        'watch_id' => $watch->id,
-        'quantity' => 10,
-    ]);
+    basketSeedInventory($watch, 10, 40);
 
     $item = BasketItem::create([
         'user_id' => $user->id,
@@ -183,10 +185,7 @@ test('updating basket quantity above stock returns validation-style error', func
     $supplier = basketMakeSupplier('Tudor Supplier');
     $watch = basketMakeWatch($category, $brand, $supplier, 'Test Watch', '250.00');
     basketMakeWatchImage($watch);
-    Inventory::create([
-        'watch_id' => $watch->id,
-        'quantity' => 2,
-    ]);
+    basketSeedInventory($watch, 2, 40);
 
     $item = BasketItem::create([
         'user_id' => $user->id,
@@ -202,7 +201,7 @@ test('updating basket quantity above stock returns validation-style error', func
     $response->assertStatus(422);
     $response->assertJson([
         'success' => false,
-        'message' => 'Requested quantity exceeds available stock.',
+        'message' => 'Requested quantity exceeds available stock for this size.',
     ]);
 });
 
@@ -241,10 +240,7 @@ test('out of stock watch can not be added to basket', function () {
     $watch = basketMakeWatch($category, $brand, $supplier, 'Test Watch', '250.00');
     basketMakeWatchImage($watch);
 
-    Inventory::create([
-        'watch_id' => $watch->id,
-        'quantity' => 0,
-    ]);
+    basketSeedInventory($watch, 0, 40);
 
     $response = $this
         ->actingAs($user)
@@ -252,7 +248,7 @@ test('out of stock watch can not be added to basket', function () {
         ->post(route('basket.store', $watch), ['size' => 40]);
 
     $response->assertRedirect(route('watches.show', $watch));
-    $response->assertSessionHas('error', 'This watch is currently out of stock.');
+    $response->assertSessionHas('error', 'This size is currently out of stock.');
 
     $this->assertDatabaseMissing('basket_items', [
         'user_id' => $user->id,

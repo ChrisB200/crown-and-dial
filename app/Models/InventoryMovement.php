@@ -8,6 +8,7 @@ class InventoryMovement extends Model
 {
     protected $fillable = [
         'watch_id',
+        'size',
         'created_by',
         'order_id',
         'type',

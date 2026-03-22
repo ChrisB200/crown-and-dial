@@ -41,17 +41,17 @@
             <h1 class="watch-brand">{{ strtoupper($watch->brand->name) }}</h1>
             <p class="watch-name">{{ $watch->name }}</p>
             <p class="watch-price">£{{ number_format($watch->price) }}</p>
-            <p class="stock-status stock-status-{{ str_replace(' ', '-', $stockStatus) }}">
+            <p id="stock-status-line" class="stock-status stock-status-{{ str_replace(' ', '-', $stockStatus) }}">
               {{ strtoupper($stockStatus) }}
             </p>
           </div>
           <div class="watch-sizes">
             <p>Size</p>
             <div class="watch-buttons">
-              <button class="size" data-size="36">36mm</button>
-              <button class="size" data-size="38">38mm</button>
-              <button class="size" data-size="40">40mm</button>
-              <button class="size" data-size="42">42mm</button>
+              @foreach(config('watch_sizes.band', [36, 38, 40, 42]) as $sz)
+                @php($q = $sizeQuantities[$sz] ?? 0)
+                <button type="button" class="size @if($q <= 0) size-unavailable @endif" data-size="{{ $sz }}" data-qty="{{ $q }}" @if($q <= 0) disabled @endif>{{ $sz }}mm</button>
+              @endforeach
             </div>
           </div>
           <div class="watch-actions">
@@ -143,6 +143,24 @@
       addToBagForm.insertAdjacentElement('beforebegin', errorDiv);
     };
 
+    const sizeQuantities = @json($sizeQuantities);
+    const lowStockThreshold = 5;
+
+    function stockLabelForQty(q) {
+      if (q <= 0) return { text: 'OUT OF STOCK', slug: 'out-of-stock' };
+      if (q < lowStockThreshold) return { text: 'LOW STOCK', slug: 'low-stock' };
+      return { text: 'IN STOCK', slug: 'in-stock' };
+    }
+
+    function updateStockLineForSize(size) {
+      const qty = parseInt(sizeQuantities[size] ?? 0, 10);
+      const line = document.getElementById('stock-status-line');
+      if (!line) return;
+      const { text, slug } = stockLabelForQty(qty);
+      line.textContent = text;
+      line.className = 'stock-status stock-status-' + slug;
+    }
+
     document.querySelectorAll('.size').forEach(button => {
       button.addEventListener('click', () => {
 
@@ -151,6 +169,8 @@
         button.classList.add('accent-button');
 
         selectedSizeInput.value = button.dataset.size;
+
+        updateStockLineForSize(button.dataset.size);
 
         const existing = document.getElementById('bag-size-error');
         if (existing) {

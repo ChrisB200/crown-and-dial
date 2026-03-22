@@ -129,7 +129,9 @@ class CheckoutController extends Controller
      */
     public function show(Order $order)
     {
-        $order->load('watches');
+        abort_unless($order->user_id === auth()->id(), 403);
+
+        $order->load(['watchOrders.watch.brand', 'watchOrders.watch.firstImage']);
 
         return view('checkout.show', compact('order'));
     }

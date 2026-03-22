@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Inventory;
 use App\Models\InventoryMovement;
 use App\Models\Order;
+use App\Models\WatchInventorySize;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -16,7 +16,7 @@ class AdminOrderController extends Controller
         $status = $request->get('status');
         $orders = Order::query()
             ->with('user')
-            ->when($status, fn($q) => $q->where('status', $status))
+            ->when($status, fn ($q) => $q->where('status', $status))
             ->orderByDesc('created_at')
             ->paginate(15)
             ->withQueryString();
@@ -26,7 +26,7 @@ class AdminOrderController extends Controller
 
     public function show(Order $order)
     {
-        $order->load(['user', 'shipping_address', 'billing_address', 'card', 'watches']);
+        $order->load(['user', 'shipping_address', 'billing_address', 'card', 'watchOrders.watch']);
         return view('admin.orders.show', compact('order'));
     }
 
@@ -48,16 +48,27 @@ class AdminOrderController extends Controller
             $order->tracking_number = $request->tracking_number;
             $order->save();
 
-            foreach ($order->watches as $watch) {
-                $watchId = $watch->id;
-                $qty = (int)($watch->pivot->quantity ?? 1);
+            $order->load('watchOrders');
 
-                $inventory = Inventory::query()->firstOrCreate(['watch_id' => $watchId], ['quantity' => 0]);
-                $inventory->quantity = max(0, (int)$inventory->quantity - $qty);
-                $inventory->save();
+            foreach ($order->watchOrders as $line) {
+                $watchId = $line->watch_id;
+                $qty = (int) $line->quantity;
+                $size = (int) $line->size;
+
+                $row = WatchInventorySize::query()->firstOrCreate(
+                    [
+                        'watch_id' => $watchId,
+                        'size' => $size,
+                    ],
+                    ['quantity' => 0]
+                );
+
+                $row->quantity = max(0, (int) $row->quantity - $qty);
+                $row->save();
 
                 InventoryMovement::create([
                     'watch_id' => $watchId,
+                    'size' => $size,
                     'created_by' => auth()->id(),
                     'order_id' => $order->id,
                     'type' => 'out',

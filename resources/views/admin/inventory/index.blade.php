@@ -8,10 +8,10 @@
     <div class="alert alert-warning">
         <strong>Inventory Alert:</strong>
         @if($outOfStockCount > 0)
-            {{ $outOfStockCount }} product(s) out of stock.
+            {{ $outOfStockCount }} product(s) out of stock (all sizes).
         @endif
         @if($lowStockCount > 0)
-            {{ $lowStockCount }} product(s) low stock (below {{ $lowThreshold }}).
+            {{ $lowStockCount }} product(s) low stock (total units below {{ $lowThreshold }}).
         @endif
     </div>
 @endif
@@ -34,17 +34,28 @@
 <div class="row">
     <div class="col-lg-8">
         <div class="block">
-            <div class="title"><strong>Stock Levels</strong></div>
+            <div class="title"><strong>Stock by size (36–42mm)</strong></div>
             <div class="table-responsive">
                 <table class="table table-dark table-striped">
-                    <thead><tr><th>Product</th><th>Qty</th><th>Status</th></tr></thead>
+                    <thead>
+                    <tr>
+                        <th>Product</th>
+                        @foreach(config('watch_sizes.band', [36, 38, 40, 42]) as $sz)
+                            <th class="text-right">{{ $sz }}mm</th>
+                        @endforeach
+                        <th class="text-right">Total</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
                     <tbody>
                     @foreach($watches as $w)
-                        @php($qty = $w->inventory?->quantity ?? 0)
                         @php($label = $w->stockStatus($lowThreshold))
                         <tr>
                             <td>{{ $w->name }}</td>
-                            <td>{{ $qty }}</td>
+                            @foreach(config('watch_sizes.band', [36, 38, 40, 42]) as $sz)
+                                <td class="text-right">{{ $w->quantityForSize((int) $sz) }}</td>
+                            @endforeach
+                            <td class="text-right font-weight-bold">{{ $w->totalStockQuantity() }}</td>
                             <td>
                                 @if($label === 'in stock')
                                     <span class="badge badge-success">in stock</span>
@@ -70,8 +81,16 @@
                 <div class="form-group">
                     <label>Product</label>
                     <select class="form-control" name="watch_id" required>
-                        @foreach($watches as $w)
+                        @foreach(\App\Models\Watch::orderBy('name')->get() as $w)
                             <option value="{{ $w->id }}">{{ $w->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Size (mm)</label>
+                    <select class="form-control" name="size" required>
+                        @foreach(config('watch_sizes.band', [36, 38, 40, 42]) as $sz)
+                            <option value="{{ $sz }}">{{ $sz }}mm</option>
                         @endforeach
                     </select>
                 </div>
